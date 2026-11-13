@@ -23,7 +23,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
-  <script type="module" crossorigin src="/assets/index-D4PpfYEX.js"></script>
+  <script type="module" crossorigin src="/assets/index-BUcm7ssS.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-C__ol7ct.css">
 </head>
 <body>
@@ -31,7 +31,306 @@
   <div class="scene-shade" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <div id="cursor" aria-hidden="true"><span class="cur-line"></span><span class="cur-label"></span></div>
-  <div id="app"></div>
+  <div id="app">  <header class="top">
+    <a class="brand" href="#hero" aria-label="BSLamp — разработка и доработка 1С">
+      <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+        <path class="bulb" d="M16 3.5a9 9 0 0 0-5.4 16.2c.9.7 1.4 1.7 1.4 2.8V24h8v-1.5c0-1.1.5-2.1 1.4-2.8A9 9 0 0 0 16 3.5z"/>
+        <g class="filament"><rect x="12" y="9" width="1.4" height="9"/><rect x="14.4" y="9" width=".8" height="9"/><rect x="16.2" y="9" width="2" height="9"/><rect x="19.1" y="9" width=".8" height="9"/></g>
+        <rect class="base" x="12" y="25.5" width="8" height="3" rx="1.2"/>
+      </svg>
+      <span class="brand-name">BSL<b>amp</b></span>
+      <span class="brand-tag">разработка 1С</span>
+    </a>
+    <nav class="nav">
+      <a href="#services">Услуги</a><a href="#cases">Кейсы</a><a href="#process">Как работаем</a><a href="#about">О нас</a>
+    </nav>
+    <div class="top-actions">
+      <button class="theme-btn" type="button" data-theme-toggle aria-label="Переключить тему">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="lang" type="button" data-lang>EN</button>
+      <a class="btn btn-y btn-sm" href="#order">Заявка</a>
+      <button class="menu-btn" type="button" aria-label="Меню" aria-expanded="false" aria-controls="nav-mobile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </header>
+  <nav class="nav-mobile" id="nav-mobile">
+    <a href="#services">Услуги</a><a href="#cases">Кейсы</a><a href="#process">Как работаем</a><a href="#about">О нас</a>
+  </nav>
+
+  <main>
+    <section id="hero" class="hero">
+      <div class="hero-text">
+        <p class="kicker">BSLamp · светлая идея для вашей 1С</p>
+        <h1><span class="line"><span>Дорабатываем 1С,</span></span><span class="line"><span class="mark">чтобы бизнес</span></span><span class="line"><span>работал сам</span></span></h1>
+        <p class="lead">УТ 11, КА, ERP 2.5. Интеграции, ТСД, миграции и сопровождение — от сбора требований до внедрения, без посредников.</p>
+        <div class="cta">
+          <a class="btn btn-y" href="#order">Оставить заявку</a>
+          <a class="btn btn-ghost" href="#cases">Смотреть кейсы</a>
+        </div>
+      </div>
+      <div class="code-card">
+        <div class="code-head"><span></span><span></span><span></span><em>МодульОбъекта.bsl</em></div>
+        <pre class="bsl" id="bsl"></pre>
+      </div>
+      <span class="scroll-hint" aria-hidden="true"></span>
+    </section>
+
+    <section id="p-forklift" class="pause" aria-label="Всё на своих местах."><p class="pause-text reveal">Всё на своих местах.</p></section>
+
+    <section id="services" class="sec">
+      <div class="sec-head reveal">
+        <div><p class="kicker">Что мы делаем</p><h2>Услуги</h2></div>
+        <div class="rate"><strong>от 2 500 ₽/час</strong><span>Точную оценку даём после короткого созвона по задаче.</span></div>
+      </div>
+      <ol class="svc-list">
+        
+          <li class="svc reveal" tabindex="0">
+            <span class="svc-num">01</span>
+            <span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5M14 4l-4 16"/></svg></span>
+            <h3>Доработка УТ / КА / ERP</h3>
+            <div class="svc-more"><p>Расширения без снятия с поддержки: отчёты, печатные формы, обработки, новые механизмы.</p></div>
+          </li>
+          <li class="svc reveal" tabindex="0">
+            <span class="svc-num">02</span>
+            <span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 12h10M9 7V3M15 7V3M6 7h12v4a6 6 0 0 1-12 0zM12 17v4"/></svg></span>
+            <h3>Интеграции</h3>
+            <div class="svc-more"><p>Битрикс24, сайты, маркетплейсы и любые REST / JSON API. Обмен без ручного ввода и дублей.</p></div>
+          </li>
+          <li class="svc reveal" tabindex="0">
+            <span class="svc-num">03</span>
+            <span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5v14M7 5v14M10 5v14M14 5v14M16 5v14M20 5v14"/></svg></span>
+            <h3>ТСД и склад</h3>
+            <div class="svc-more"><p>Клеверенс Mobile SMARTS: приёмка, отгрузка, инвентаризация, двусторонний обмен с 1С.</p></div>
+          </li>
+          <li class="svc reveal" tabindex="0">
+            <span class="svc-num">04</span>
+            <span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 8h13l-3-3M20 16H7l3 3"/></svg></span>
+            <h3>Миграции и обновления</h3>
+            <div class="svc-more"><p>Переход УТ 10.3 → УТ 11, на КА и ERP, обновление доработанных конфигураций.</p></div>
+          </li>
+          <li class="svc reveal" tabindex="0">
+            <span class="svc-num">05</span>
+            <span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M6.3 6.3l3.5 3.5M14.2 14.2l3.5 3.5M17.7 6.3l-3.5 3.5M9.8 14.2l-3.5 3.5"/></svg></span>
+            <h3>Сопровождение</h3>
+            <div class="svc-more"><p>Абонентская поддержка базы: ошибки, мелкие доработки, обновления, консультации.</p></div>
+          </li>
+          <li class="svc reveal" tabindex="0">
+            <span class="svc-num">06</span>
+            <span class="svc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="8" width="14" height="11" rx="2"/><path d="M12 4v4M9 13h.01M15 13h.01M9 16h6"/></svg></span>
+            <h3>Автоматизация процессов</h3>
+            <div class="svc-more"><p>Автозаказ, рабочие места сотрудников, аналитика — убираем рутину из ежедневной работы.</p></div>
+          </li>
+      </ol>
+      <div class="also-block reveal">
+        <h3 class="also-title">Также делаем</h3>
+        <div class="also-grid">
+          <div class="also"><h4>Разработка с ИИ</h4><p>Используем ИИ-инструменты в работе — задачи закрываются быстрее, а значит дешевле для вас.</p></div><div class="also"><h4>Сайты и веб-приложения</h4><p>Лендинги, личные кабинеты, приложения iOS / macOS — например, iMoney и ShopAmp.</p></div><div class="also"><h4>Аудит кода 1С</h4><p>Проверка доработок на ошибки, запросы в цикле и отступления от стандартов 1С:ИТС.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="p-tsd" class="pause" aria-label="Склад без бумажек."><p class="pause-text reveal">Склад без бумажек.</p></section>
+
+    <section id="cases" class="sec">
+      <div class="sec-head reveal"><div><p class="kicker">Реализованные проекты</p><h2>Кейсы</h2></div></div>
+      <div class="journal reveal">
+        <div class="journal-list" role="tablist" aria-label="Журнал кейсов">
+          <div class="journal-head" aria-hidden="true"><span>N</span><span>Проект</span></div>
+          
+            <button type="button" class="journal-row on" role="tab" aria-selected="true" data-case="0" data-cursor="Открыть">
+              <span class="j-num">01</span>
+              <span class="j-name"><b>Битрикс24 ↔ 1С:ERP</b><small>Производство кофейной продукции</small></span>
+            </button>
+            <button type="button" class="journal-row" role="tab" aria-selected="false" data-case="1" data-cursor="Открыть">
+              <span class="j-num">02</span>
+              <span class="j-name"><b>ТСД на складе</b><small>Оптовый дистрибьютор электротехники</small></span>
+            </button>
+            <button type="button" class="journal-row" role="tab" aria-selected="false" data-case="2" data-cursor="Открыть">
+              <span class="j-num">03</span>
+              <span class="j-name"><b>АРМ логиста</b><small>Оптовая торговля</small></span>
+            </button>
+            <button type="button" class="journal-row" role="tab" aria-selected="false" data-case="3" data-cursor="Открыть">
+              <span class="j-num">04</span>
+              <span class="j-name"><b>Загрузка прайсов поставщиков</b><small>Оптовая торговля</small></span>
+            </button>
+            <button type="button" class="journal-row" role="tab" aria-selected="false" data-case="4" data-cursor="Открыть">
+              <span class="j-num">05</span>
+              <span class="j-name"><b>Автозаказ товара</b><small>Розничная сеть</small></span>
+            </button>
+            <button type="button" class="journal-row" role="tab" aria-selected="false" data-case="5" data-cursor="Открыть">
+              <span class="j-num">06</span>
+              <span class="j-name"><b>Автосверка актов</b><small>Оптовая торговля</small></span>
+            </button>
+            <button type="button" class="journal-row" role="tab" aria-selected="false" data-case="6" data-cursor="Открыть">
+              <span class="j-num">07</span>
+              <span class="j-name"><b>Миграция УТ 10.3 → УТ 11</b><small>Торговая компания</small></span>
+            </button>
+            <button type="button" class="journal-row" role="tab" aria-selected="false" data-case="7" data-cursor="Открыть">
+              <span class="j-num">08</span>
+              <span class="j-name"><b>Перенос настроек ERP / КА</b><small>Внедрение</small></span>
+            </button>
+        </div>
+        <div class="case-view" id="case-view" role="tabpanel" aria-live="polite">
+    <article class="case-static">
+      <h3>Кейс 01: Битрикс24 ↔ 1С:ERP</h3>
+      <p>Отрасль: Производство кофейной продукции. Конфигурация: ERP 2.5.</p>
+      <p>Задача: Заказы с сайта вводились вручную, появлялись дубли, процесс сайта не совпадал с типовым обменом.</p>
+      <p>Решение: Переписали модуль обмена под нестандартный бизнес-процесс: синхронизация заказов, контрагентов и сертификатов.</p>
+      <p>Результат: Заказы приходят в 1С сами, ручной ввод и дубли ушли.</p>
+    </article>
+    <article class="case-static">
+      <h3>Кейс 02: ТСД на складе</h3>
+      <p>Отрасль: Оптовый дистрибьютор электротехники. Конфигурация: УТ 11 + Mobile SMARTS.</p>
+      <p>Задача: Приёмка, отгрузка и инвентаризация велись по бумаге, ошибки всплывали уже в учёте.</p>
+      <p>Решение: Бизнес-процессы на ТСД Клеверенс для всех складских операций и двусторонний обмен с 1С.</p>
+      <p>Результат: Складские операции быстрее, расхождения ловятся прямо на сканере.</p>
+    </article>
+    <article class="case-static">
+      <h3>Кейс 03: АРМ логиста</h3>
+      <p>Отрасль: Оптовая торговля. Конфигурация: КА / ERP.</p>
+      <p>Задача: Логист планировал доставки вручную по таблицам и картам в браузере.</p>
+      <p>Решение: Рабочее место в 1С с подключением API карт: маршруты, рейсы, планирование доставки.</p>
+      <p>Результат: Планирование доставки в одном окне, без переключения между программами.</p>
+    </article>
+    <article class="case-static">
+      <h3>Кейс 04: Загрузка прайсов поставщиков</h3>
+      <p>Отрасль: Оптовая торговля. Конфигурация: КА / УТ 11.</p>
+      <p>Задача: Прайсы десятков поставщиков в разных форматах Excel разбирались руками.</p>
+      <p>Решение: Загрузка с настройкой колонок под каждого поставщика, сопоставление номенклатуры, предпросмотр перед записью.</p>
+      <p>Результат: Цены поставщиков обновляются за минуты, а не за день.</p>
+    </article>
+    <article class="case-static">
+      <h3>Кейс 05: Автозаказ товара</h3>
+      <p>Отрасль: Розничная сеть. Конфигурация: УТ 11.</p>
+      <p>Задача: Закупщики формировали заказы поставщикам вручную по остаткам и продажам.</p>
+      <p>Решение: Система автоматического заказа: расчёт потребности по продажам, остаткам и срокам поставки.</p>
+      <p>Результат: Меньше ручных закупок, меньше пустых полок и залежавшегося товара.</p>
+    </article>
+    <article class="case-static">
+      <h3>Кейс 06: Автосверка актов</h3>
+      <p>Отрасль: Оптовая торговля. Конфигурация: КА / ERP.</p>
+      <p>Задача: Акты сверки контрагентов сверялись с 1С построчно, глазами.</p>
+      <p>Решение: Обработка сравнивает акт контрагента с данными 1С и подсвечивает расхождения.</p>
+      <p>Результат: Сверка за минуты, бухгалтер смотрит только на расхождения.</p>
+    </article>
+    <article class="case-static">
+      <h3>Кейс 07: Миграция УТ 10.3 → УТ 11</h3>
+      <p>Отрасль: Торговая компания. Конфигурация: УТ 10.3 → УТ 11.</p>
+      <p>Задача: Компания работала на устаревшей УТ 10.3 и боялась потерять данные и настроенные обмены при переходе.</p>
+      <p>Решение: Провели переход на УТ 11: перенесли данные и справочники, сохранили логику обменов.</p>
+      <p>Результат: Компания работает в актуальной УТ 11 без потери истории и привычных процессов.</p>
+    </article>
+    <article class="case-static">
+      <h3>Кейс 08: Перенос настроек ERP / КА</h3>
+      <p>Отрасль: Внедрение. Конфигурация: ERP / КА.</p>
+      <p>Задача: При запуске новой базы настройки приходилось повторять вручную.</p>
+      <p>Решение: Универсальный механизм выгрузки и загрузки настроек между базами.</p>
+      <p>Результат: Новая база настраивается за часы, без ошибок ручного повтора.</p>
+    </article></div>
+      </div>
+    </section>
+
+    <section id="p-truck" class="pause" aria-label="От заказа до отгрузки — в одной 1С."><p class="pause-text reveal">От заказа до отгрузки — в одной 1С.</p></section>
+
+    <section id="process" class="sec">
+      <div class="sec-head reveal"><div><p class="kicker">Как работаем</p><h2>Этапы</h2></div></div>
+      <div class="console reveal">
+        <div class="console-title"><span></span><span></span><span></span><em>Консоль запросов</em></div>
+        <pre class="console-query" id="console-query" data-text="ВЫБРАТЬ Задача
+ИЗ ВашБизнес
+ГДЕ Рутина > 0">ВЫБРАТЬ Задача
+ИЗ ВашБизнес
+ГДЕ Рутина > 0</pre>
+        <div class="console-result">
+          <div class="cr-head"><span>Результат запроса</span><span>6</span></div>
+          <div class="cr-row"><span class="cr-n">1</span><b>Разбираем задачу</b><span class="cr-t">Короткий созвон: что болит, какая конфигурация, как должно быть.</span></div><div class="cr-row"><span class="cr-n">2</span><b>Оцениваем и пишем ТЗ</b><span class="cr-t">Фиксируем объём, сроки и стоимость — без сюрпризов в конце.</span></div><div class="cr-row"><span class="cr-n">3</span><b>Разрабатываем</b><span class="cr-t">В расширении, по стандартам 1С:ИТС и БСП — базу легко обновлять дальше.</span></div><div class="cr-row"><span class="cr-n">4</span><b>Тестируем на копии</b><span class="cr-t">Проверяем на копии вашей базы, а не на рабочей.</span></div><div class="cr-row"><span class="cr-n">5</span><b>Внедряем и обучаем</b><span class="cr-t">Переносим в рабочую базу, пишем инструкцию, обучаем пользователей.</span></div><div class="cr-row"><span class="cr-n">6</span><b>Сопровождаем</b><span class="cr-t">Остаёмся на связи: исправления, доработки, обновления.</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="p-server" class="pause" aria-label="Ваша база под присмотром."><p class="pause-text reveal">Ваша база под присмотром.</p></section>
+
+    <section id="about" class="sec">
+      <p class="kicker reveal">О нас</p>
+      <div class="about glass reveal">
+        <div>
+          <h2>Пришли в 1С из бизнеса</h2>
+          <div class="founder">
+            <span class="founder-mark" aria-hidden="true">НР</span>
+            <span><em>Основатель</em><b>Нигина Ражабова</b><small>разработчик 1С уровня Middle+</small></span>
+          </div>
+          <p>BSLamp начался не с курсов, а с бизнеса: основатель студии была управляющей розничной сети — сама вела учёт, заказы и работу операторов в 1С, потом перешла к доработкам и полноценной разработке.</p><p>Поэтому мы сначала разбираемся в процессе, а потом пишем код. Ведём задачу целиком — от сбора требований до внедрения и сопровождения, без лишних посредников.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><strong>5+</strong><span>лет в разработке 1С</span></div><div class="stat"><strong>9+</strong><span>лет в IT и управлении</span></div><div class="stat"><strong>80+</strong><span>обученных пользователей</span></div><div class="stat"><strong>4</strong><span>конфигурации: УТ, КА, ERP, Розница</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="order" class="sec">
+      <p class="kicker reveal">Заявка</p>
+      <div class="sec-head reveal"><h2 class="final-title">Обсудим задачу?</h2></div>
+      <div class="order-wrap">
+        <div class="order reveal" data-number="BSL-000000">
+          
+  <div class="win ">
+    <div class="win-title">
+      <span class="win-nav" aria-hidden="true"><i>‹</i><i>›</i><i class="star">☆</i></span>
+      <span class="win-title-text">Заявка на доработку (создание)</span>
+      <span class="win-ctl" aria-hidden="true"><i>⋮</i><i>▢</i><i>×</i></span>
+    </div>
+    <div class="win-cmd">
+              <button type="button" class="cmd cmd-main" data-act="post">Провести и закрыть</button>
+              <button type="button" class="cmd" data-act="write">Записать</button>
+              <button type="button" class="cmd" data-act="post-only">Провести</button></div>
+    <div class="win-body">
+            <form novalidate>
+              <div class="doc-head">
+                <div class="field ro"><label for="f-no">Документ</label><input id="f-no" value="BSL-000000" readonly tabindex="-1"></div>
+                <div class="field ro"><label for="f-date">от</label><input id="f-date" value="" readonly tabindex="-1"></div>
+              </div>
+              <div class="field"><label for="f-name">Контрагент</label><input id="f-name" name="name" autocomplete="name" placeholder="Имя или компания"></div>
+              <div class="field-row">
+                <div class="field"><label for="f-config">Конфигурация</label><select id="f-config" name="config"><option>УТ 11</option><option>КА 2</option><option>ERP 2.5</option><option>Розница</option><option>Другая / не знаю</option></select></div>
+                <div class="field"><label for="f-kind">Вид работ</label><select id="f-kind" name="kind"><option>Доработка</option><option>Интеграция</option><option>ТСД и склад</option><option>Миграция / обновление</option><option>Сопровождение</option><option>Автоматизация</option><option>Другое</option></select></div>
+              </div>
+              <div class="field"><label for="f-task">Описание задачи</label><textarea id="f-task" name="task" rows="4" placeholder="Что нужно сделать и зачем"></textarea></div>
+              <div class="field"><label for="f-contact">Контакт для связи</label><input id="f-contact" name="contact" autocomplete="tel" placeholder="Телефон, почта или Telegram"></div>
+              <p class="draft-note">Черновик хранится только в вашем браузере.</p>
+            </form>
+            <div class="messages" hidden><b>Сообщения:</b><ul></ul></div>
+            <div class="posted" hidden>
+              <p class="posted-title">✓ Документ проведён</p>
+              <p>Заявка сформирована. Отправьте её удобным способом — ответим в течение дня.</p>
+              <pre></pre>
+              <div class="send-row">
+                <a class="send send-tg" data-send="tg" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/></svg><span>Telegram</span></a>
+                <a class="send send-wa" data-send="wa" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1.3-4A8 8 0 1 1 8 18.7z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-1.8-1.8l.8-1-1-2z"/></svg><span>WhatsApp</span></a>
+                <a class="send send-mail" data-send="mail"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>Почта</span></a>
+              </div>
+              <p class="send-hint" hidden>Текст заявки скопирован — вставьте его в чат, если он не подставился сам.</p>
+              <button type="button" class="cmd new-order" data-act="new">＋ Новая заявка</button>
+            </div>
+          </div>
+  </div>
+        </div>
+        <aside class="contacts glass reveal">
+          <h3>Или напишите напрямую</h3>
+          <a href="https://t.me/geronimo_1984" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 4L3 11l6 2 2 6 3-4 5 4z"/></svg><span>Telegram @geronimo_1984</span></a><a href="tel:+79950793764" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h4l2 5-3 2a11 11 0 0 0 5 5l2-3 5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg><span>+7 (995) 079-37-64</span></a><a href="mailto:niginarazhabova1994@gmail.com" ><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>niginarazhabova1994@gmail.com</span></a><a href="https://github.com/Geronimo1984" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 19c-4 1.5-4-2-6-2.5M15 21v-3.5a3 3 0 0 0-1-2.5c3 0 6-2 6-5.5a4.5 4.5 0 0 0-1.3-3.2 4 4 0 0 0-.1-3.3s-1.1-.3-3.4 1.3a12 12 0 0 0-6.2 0C6.7 2.7 5.6 3 5.6 3a4 4 0 0 0-.1 3.3A4.5 4.5 0 0 0 4.2 9.5C4.2 13 7.2 15 10 15a3 3 0 0 0-1 2.5V21"/></svg><span>GitHub</span></a>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wordmark" aria-hidden="true">BSL<b>amp</b></div>
+    <span>© 2026 BSLamp · основатель — Нигина Ражабова · Сайт сделан с нуля: Three.js + немного BSL · <a href="#credits" class="credits-link" aria-controls="credits" aria-expanded="false">3D-модели</a></span>
+    <a href="#hero">Наверх ↑</a>
+    <p class="credits" id="credits" hidden>cygnos, tonielpro520, entropy9ine, absologixemployee, plaggy, poala (Sketchfab, CC BY 4.0, изменены)</p>
+  </footer></div>
   <noscript><p style="padding:24px;color:#1f1d19">BSLamp — разработка 1С, Нигина Ражабова. Телефон: +7 (995) 079-37-64.</p></noscript>
 </body>
 </html>
