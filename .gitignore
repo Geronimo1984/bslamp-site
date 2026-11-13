@@ -1,0 +1,6 @@
+node_modules
+dist
+.DS_Store
+# только для разработки: редактор сцены (симлинк на общий tools/) и служебные файлы
+scripts/
+.claude/
