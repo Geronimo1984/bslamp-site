@@ -15,7 +15,7 @@
   --top-bg: rgba(243, 239, 230, 0.82);
   --menu-bg: rgba(243, 239, 230, 0.97);
   --shade: linear-gradient(90deg, rgba(243, 239, 230, 0.62) 0%, rgba(243, 239, 230, 0.4) 32%, rgba(243, 239, 230, 0) 58%);
-  --shade-mobile: linear-gradient(180deg, rgba(243, 239, 230, 0.7), rgba(243, 239, 230, 0.55) 60%, rgba(243, 239, 230, 0.35));
+  --shade-mobile: linear-gradient(180deg, rgba(243, 239, 230, 0.38), rgba(243, 239, 230, 0.22) 60%, rgba(243, 239, 230, 0.12));
   --ghost-bg: rgba(255, 255, 255, 0.5);
   --ghost-line: rgba(31, 29, 25, 0.25);
   --cursor: rgba(31, 29, 25, 0.75);
