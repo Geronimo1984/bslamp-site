@@ -8,6 +8,7 @@ import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPa
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import { loadModels } from './models.js';
 import { TSD_LAYOUT } from './layout.js';
+import { addBackdrop } from './backdrop.js';
 
 const YELLOW = 0xffd400;
 const RED = 0xe5332a;
@@ -65,6 +66,7 @@ export function createScene(canvas, { mobile }) {
   // Детальные модели подгружаются после первого кадра и заменяют простые фигуры
   loadModels(scene, { boxes: shelves.boxes, tsd, tsdRotY: Math.PI, truck: truck.group, racks: servers.racks, leds: servers.leds });
   const barcodes = addBarcodeParticles(scene, mobile ? 90 : 260);
+  const backdrop = addBackdrop(scene, { mobile }); // окна, фермы, доки, надписи, колонны, мелочи
 
   // Сплайны пути камеры и точки взгляда
   const posCurve = new THREE.CatmullRomCurve3(STATIONS.map((s) => new THREE.Vector3(...s.pos)), false, 'centripetal');
@@ -146,6 +148,7 @@ export function createScene(canvas, { mobile }) {
     truck.update(t);
     servers.update(t);
     barcodes.update(t);
+    backdrop.update(t);
 
     if (useBloom) composer.render();
     else renderer.render(scene, camera);
@@ -192,6 +195,7 @@ export function createScene(canvas, { mobile }) {
     old.geometry.dispose();
     scene.add(LOOK.grid);
     bloom.strength = th.bloom;
+    backdrop.setTheme(name);
   }
 
   return {
