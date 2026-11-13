@@ -69,6 +69,10 @@ export function createScene(canvas, { mobile }) {
   // Сплайны пути камеры и точки взгляда
   const posCurve = new THREE.CatmullRomCurve3(STATIONS.map((s) => new THREE.Vector3(...s.pos)), false, 'centripetal');
   const lookCurve = new THREE.CatmullRomCurve3(STATIONS.map((s) => new THREE.Vector3(...s.look)), false, 'centripetal');
+  // Положение каждой точки пути по длине кривой — чтобы камера летела с постоянной скоростью
+  const SAMPLES = 600;
+  const lengths = posCurve.getLengths(SAMPLES);
+  const pointU = STATIONS.map((_, i) => lengths[Math.round((i / (STATIONS.length - 1)) * SAMPLES)] / lengths[SAMPLES]);
 
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
@@ -119,23 +123,32 @@ export function createScene(canvas, { mobile }) {
 
   const clock = new THREE.Clock();
   let running = true;
+  let last = performance.now();
+  const lookSmooth = new THREE.Vector3(...STATIONS[0].look);
+  const mouseSmooth = new THREE.Vector2();
+  const damp = (speed, dt) => 1 - Math.exp(-speed * dt); // сглаживание по времени, не по кадрам
   function frame(now) {
     if (!running) return;
     requestAnimationFrame(frame);
     const t = clock.getElapsedTime();
-    current += (target - current) * 0.06;
+    const dt = Math.min(0.1, (now - last) / 1000);
+    last = now;
+    current += (target - current) * damp(2.4, dt);
 
     const u = THREE.MathUtils.clamp(current, 0, 1);
     const k = u * (KEYS.length - 1);
     const i0 = Math.min(Math.floor(k), KEYS.length - 2);
-    // доля между кадрами → параметр кривой; getPoint(i/(n-1)) попадает точно в точку i
-    const pt = THREE.MathUtils.lerp(keyIdx[i0], keyIdx[i0 + 1], k - i0) / (STATIONS.length - 1);
-    posCurve.getPoint(pt, camPos);
-    lookCurve.getPoint(pt, camLook);
-    camPos.x += mouse.x * 0.6;
-    camPos.y -= mouse.y * 0.35;
+    // доля между кадрами → доля длины пути: скорость камеры постоянная на всём участке
+    const uArc = THREE.MathUtils.lerp(pointU[keyIdx[i0]], pointU[keyIdx[i0 + 1]], k - i0);
+    posCurve.getPointAt(uArc, camPos);
+    lookCurve.getPoint(posCurve.getUtoTmapping(uArc), camLook);
+    // взгляд догоняет плавно — без рывков на поворотах, как у операторской камеры
+    lookSmooth.lerp(camLook, damp(3.2, dt));
+    mouseSmooth.lerp(mouse, damp(2.5, dt));
+    camPos.x += mouseSmooth.x * 0.5;
+    camPos.y -= mouseSmooth.y * 0.3;
     camera.position.copy(camPos);
-    camera.lookAt(camLook);
+    camera.lookAt(lookSmooth);
     const fov = THREE.MathUtils.lerp(stationFov[i0], stationFov[i0 + 1], k - i0);
     if (Math.abs(camera.fov - fov) > 0.01) {
       camera.fov = fov;
@@ -157,6 +170,7 @@ export function createScene(canvas, { mobile }) {
     running = !document.hidden;
     if (running) {
       clock.getDelta();
+      last = performance.now(); // после паузы вкладки — без скачка
       requestAnimationFrame(frame);
     }
   });

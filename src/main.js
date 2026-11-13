@@ -437,13 +437,15 @@ function measure() {
   tops = SECTIONS.map((id) => document.getElementById(id).offsetTop);
 }
 function onScroll() {
-  const mid = scrollY + innerHeight * 0.5;
+  // отсчёт от верха экрана: секция «наверху» = её кадр; в самом начале страницы камера стоит на первом кадре
+  const mid = scrollY + 64;
   let i = 0;
   while (i < tops.length - 2 && mid >= tops[i + 1]) i++;
   const span = tops[i + 1] - tops[i] || 1;
   const frac = Math.min(1, Math.max(0, (mid - tops[i]) / span));
-  const f = Math.min(1, Math.max(0, (frac - 0.45) / 0.55));
-  const eased = f * f * (3 - 2 * f);
+  // камера едет почти всю секцию, с мягким разгоном и торможением (smootherstep)
+  const f = Math.min(1, Math.max(0, (frac - 0.05) / 0.9));
+  const eased = f * f * f * (f * (f * 6 - 15) + 10);
   const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 4;
   const key = SECTION_KEY[i] + (SECTION_KEY[i + 1] - SECTION_KEY[i]) * eased;
   scene.setProgress(atEnd ? 1 : key / (KEY_COUNT - 1));
