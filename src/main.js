@@ -219,6 +219,7 @@ function render() {
                 <a class="send send-mail" data-send="mail">${icon('mail')}<span>${t.order.sendMail}</span></a>
               </div>
               <p class="send-hint" hidden>${t.order.copiedHint}</p>
+              <button type="button" class="cmd new-order" data-act="new">＋ ${t.order.newOrder}</button>
             </div>
           `, {
             commands: `
@@ -270,6 +271,9 @@ function render() {
   };
   menuBtn.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
   menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
+  // закрыть меню по Esc и по клику мимо
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
+  document.addEventListener('click', (e) => { if (!e.target.closest('#nav-mobile, .menu-btn')) setMenu(false); });
 
   initCases(t);
   initMagnet();

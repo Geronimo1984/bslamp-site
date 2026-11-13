@@ -417,6 +417,7 @@ h2 { font: 500 clamp(32px, 4.2vw, 54px)/1.08 var(--f-head); letter-spacing: -0.0
 .send-wa { background: #25b05a; }
 .send-mail { background: var(--taxi-ink); }
 .send-hint { margin-top: 10px; font-size: 13px; color: #2b6b1d; }
+.new-order { margin-top: 14px; }
 .is-posted form { opacity: 0.6; pointer-events: none; }
 .contacts { padding: 24px; display: grid; gap: 6px; background: var(--surface); }
 .contacts h3 { font: 500 16px var(--f-head); margin-bottom: 10px; }
@@ -460,6 +461,24 @@ h2 { font: 500 clamp(32px, 4.2vw, 54px)/1.08 var(--f-head); letter-spacing: -0.0
   .hero { grid-template-columns: 1fr; align-content: center; }
   .code-card { justify-self: start; align-self: start; margin-bottom: 0; }
   .order-wrap, .about, .journal { grid-template-columns: 1fr; }
+}
+@media (max-width: 1020px) {
+  /* планшет: меню не помещается в строку — прячем в бургер */
+  .nav { display: none; }
+  .brand-tag { display: none; }
+  .top-actions { margin-left: auto; }
+  .menu-btn {
+    display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
+    background: transparent; color: var(--ink); border: 1px solid var(--line); cursor: pointer;
+  }
+  .menu-btn svg { width: 18px; height: 18px; }
+  .nav-mobile.open {
+    display: grid; position: fixed; top: 63px; left: 0; right: 0; z-index: 9; padding: 8px var(--gutter) 16px;
+    background: var(--menu-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--line);
+  }
+  .nav-mobile a { padding: 14px 4px; font-size: 18px; text-decoration: none; border-bottom: 1px solid var(--line); }
+  .nav-mobile a:last-child { border-bottom: 0; }
 }
 @media (max-width: 760px) {
   .nav { display: none; }

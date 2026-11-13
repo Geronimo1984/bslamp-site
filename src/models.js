@@ -10,7 +10,6 @@ const BASE = `${import.meta.env.BASE_URL}models/`;
 
 const loader = new GLTFLoader();
 loader.setMeshoptDecoder(MeshoptDecoder);
-const load = (name) => loader.loadAsync(`${BASE}${name}.glb`).then((g) => g.scene);
 
 // Вписать модель в нужный размер: по высоте или по длине; низ — на y = 0, центр — в начале координат.
 // rotY — поворот самой модели внутри обёртки (у разных авторов «вперёд» смотрит в разные стороны).
@@ -57,6 +56,19 @@ function unitGeometry(model) {
 }
 
 export function loadModels(scene, refs) {
+  // Сначала то, что видно на первых экранах (коробки, погрузчик, паллеты), остальное — следом.
+  // На медленном интернете первый экран оживает быстрее: ТСД (1,8 МБ) не отнимает канал.
+  const FIRST = ['box', 'forklift', 'pallet'];
+  const firstLoads = [];
+  let openGate;
+  const gate = new Promise((resolve) => { openGate = resolve; });
+  const load = (name) => {
+    const fetchModel = () => loader.loadAsync(`${BASE}${name}.glb`).then((g) => g.scene);
+    if (!FIRST.includes(name)) return gate.then(fetchModel);
+    const p = fetchModel();
+    firstLoads.push(p);
+    return p;
+  };
   const tasks = [
     // Коробки на стеллажах: та же расстановка, но с текстурой картона
     load('box').then((m) => {
@@ -124,6 +136,7 @@ export function loadModels(scene, refs) {
       });
     }),
   ];
+  Promise.allSettled(firstLoads).then(() => openGate());
   return Promise.allSettled(tasks).then((res) => {
     applyLayout(scene); // расстановка из редактора поверх начальной
     // погрузчик — колёсами на пол (в редакторе его чуть приподняло)

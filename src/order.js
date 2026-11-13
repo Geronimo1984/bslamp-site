@@ -56,7 +56,21 @@ export function initOrder(root, t, lang) {
   root.querySelector('[data-act="write"]').addEventListener('click', () => {
     const ok = writeDraft(collect());
     showMessages([]);
-    flash(root.querySelector('[data-act="write"]'), ok ? t.saved : t.required);
+    flash(root.querySelector('[data-act="write"]'), ok ? t.saved : t.saveFailed);
+  });
+
+  // «Новая заявка»: после проведения документ можно создать заново, без перезагрузки страницы
+  const titleNew = title.textContent;
+  root.querySelector('[data-act="new"]').addEventListener('click', () => {
+    form.reset();
+    try { localStorage.removeItem(DRAFT_KEY); } catch { /* приватный режим */ }
+    root.dataset.number = docNumber();
+    form.elements[0].value = root.dataset.number;
+    root.classList.remove('is-posted');
+    title.textContent = titleNew;
+    done.hidden = true;
+    done.querySelector('.send-hint').hidden = true;
+    form.elements.name.focus();
   });
 
   const post = async () => {
