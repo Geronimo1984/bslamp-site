@@ -108,8 +108,11 @@ export function initLive(scene3d, { lang, reduced }) {
     g.fillText(ru ? '✓ Принято' : '✓ Received', w / 2, h / 2 + 3);
   });
   tick.redraw();
-  const tickSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tick.tex, transparent: true, opacity: 0, depthWrite: false, toneMapped: false }));
-  tickSprite.scale.set(1.4, 0.44, 1);
+  // значок рисуется поверх всего (depthTest: false) и левее ТСД — не «проходит» сквозь модель
+  const tickSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tick.tex, transparent: true, opacity: 0, depthWrite: false, depthTest: false, toneMapped: false }));
+  tickSprite.scale.set(1.1, 0.34, 1);
+  tickSprite.renderOrder = 10;
+  tickSprite.visible = false;
   scene.add(tickSprite);
   const crate = scene.getObjectByName('Коробка со штрихкодом');
   const CRATE = crate ? crate.position.clone() : new THREE.Vector3(0.8, 1.15, -10.6);
@@ -151,21 +154,22 @@ export function initLive(scene3d, { lang, reduced }) {
   }
 
   // ---------- 4. статус базы над серверными стойками (о нас) ----------
-  const status = board(1024, 220, (g, w, h, pulse) => {
+  // текстура рисуется один раз; пульсирует отдельный кружок (без перерисовки холста каждый кадр)
+  const status = board(1024, 220, (g, w, h) => {
     roundRect(g, 0, 0, w, h, 26);
     g.fillStyle = 'rgba(31,29,25,0.92)';
-    g.fill();
-    g.fillStyle = `rgba(47,191,113,${0.35 + pulse * 0.65})`;
-    g.beginPath();
-    g.arc(78, h / 2, 26, 0, Math.PI * 2);
     g.fill();
     g.fillStyle = '#f3efe6';
     g.font = `700 ${h * 0.3}px ${MONO}`;
     g.textBaseline = 'middle';
     g.fillText(ru ? '1С · ОНЛАЙН' : '1C · ONLINE', 136, h / 2);
   });
-  status.redraw(1);
+  status.redraw();
   const statusBoard = plate(status.tex, 2.0, 0.43);
+  const dotMat = new THREE.MeshBasicMaterial({ color: 0x2fbf71, transparent: true, toneMapped: false });
+  const dot = new THREE.Mesh(new THREE.CircleGeometry(0.05, 20), dotMat);
+  dot.position.set(-1.0 + (78 / 1024) * 2.0, 0, 0.005);
+  statusBoard.add(dot);
   hang(statusBoard, [11.4, 2.75, -29.4], 4); // перед стойками серверной, справа вверху кадра
 
   // ---------- 5. табло заявки (заявка) ----------
@@ -189,18 +193,20 @@ export function initLive(scene3d, { lang, reduced }) {
   scene3d.onFrame((t) => {
     const now = performance.now();
     for (const s of slots) {
+      if (!s.hot) continue;
       s.hot = Math.max(0, s.hot - 0.03);
       s.m.scale.setScalar(1 + s.hot * 0.25);
     }
     if (scanAt > 0) {
       const p = (now - scanAt) / 1400;
-      if (p >= 1) { scanAt = -1; tickSprite.material.opacity = 0; }
+      tickSprite.visible = p < 1;
+      if (p >= 1) scanAt = -1;
       else {
-        tickSprite.position.set(CRATE.x, CRATE.y + 0.55 + p * 0.45, CRATE.z);
+        tickSprite.position.set(CRATE.x - 0.45, CRATE.y + 0.5 + p * 0.3, CRATE.z + 0.3);
         tickSprite.material.opacity = p < 0.15 ? p / 0.15 : 1 - Math.max(0, (p - 0.6) / 0.4);
       }
     }
-    if (active === 'about') status.redraw((Math.sin(t * 3) + 1) / 2);
+    if (active === 'p-server' || active === 'about') dotMat.opacity = 0.35 + 0.65 * (Math.sin(t * 3) + 1) / 2;
     if (flashAt > 0) {
       const p = (now - flashAt) / 900;
       scene3d.setExposure(p >= 1 ? 1 : 1 + 0.6 * Math.sin(p * Math.PI));
