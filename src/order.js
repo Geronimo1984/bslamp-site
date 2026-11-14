@@ -80,6 +80,7 @@ export function initOrder(root, t, lang) {
     const number = root.dataset.number;
     const text = leadText(data, t, number);
     root.classList.add('is-posted');
+    document.dispatchEvent(new CustomEvent('order:posted')); // склад отвечает: табло «проведена» и вспышка света
     title.textContent = `${t.doc} ${number} — ${t.posted}`;
     done.hidden = false;
     done.querySelector('pre').textContent = text;

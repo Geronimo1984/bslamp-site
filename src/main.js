@@ -19,7 +19,8 @@ const KEY_COUNT = 6;
 let lang = pickLang();
 let theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'; // по умолчанию светлая
 let scene = null;
-let world = null; // режим «мир»: стенды в 3D (выключен, если 3D нет)
+let world = null;
+let live = null; // «живой склад»: события в 3D по разделу, который читают // режим «мир»: стенды в 3D (выключен, если 3D нет)
 
 function pickLang() {
   const q = new URLSearchParams(location.search).get('lang');
@@ -301,6 +302,7 @@ function onScroll() {
   const f = Math.min(1, Math.max(0, (frac - 0.45) / 0.55));
   const eased = f * f * (3 - 2 * f);
   const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 4;
+  live?.setSection(atEnd ? SECTIONS[SECTIONS.length - 1] : SECTIONS[mid >= tops[i + 1] ? i + 1 : i]);
   const key = SECTION_KEY[i] + (SECTION_KEY[i + 1] - SECTION_KEY[i]) * eased;
   scene.setProgress(atEnd ? 1 : key / (KEY_COUNT - 1));
 }
@@ -386,5 +388,9 @@ initScene().then(async () => {
   applyTheme(theme, false);
   render();
   initCursor();
-  await initWorldMode();
+  if (!scene) return;
+  const { initLive } = await import('./live.js');
+  live = initLive(scene, { lang, reduced });
+  onScroll();
+  // await initWorldMode(); // режим «мир» отклонён 14.11 (метка world-proto)
 });

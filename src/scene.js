@@ -211,6 +211,7 @@ export function createScene(canvas, { mobile }) {
   return {
     setTheme,
     stations: KEYS.length,
+    keys: KEYS, // кадры локаций (pos/look/fov) — чтобы табло в «живом складе» смотрели в кадр
     setProgress(p) { target = p; },
     // для режима «мир»: стенды рисуются той же камерой
     camera,
