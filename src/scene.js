@@ -16,9 +16,9 @@ const BG = 0xe9e3d6; // дневной склад: тёплая светлая �
 
 // Две темы склада: день (светлая тема сайта) и вечер (тёмная). Ссылки на свет и материалы — в LOOK.
 const THEMES = {
-  light: { bg: 0xe9e3d6, fog: 0.032, exposure: 1.0, hemi: [0xfffaf0, 0xb8ad98, 1.6], key: 1.6, fill: 0.5, points: 1, strip: 0xffffff,
+  light: { bg: 0xe9e3d6, fog: 0.021, exposure: 1.0, hemi: [0xfffaf0, 0xb8ad98, 1.3], key: 1.9, fill: 0.5, points: 1, strip: 0xffffff,
     floor: 0xcfc8ba, wall: 0xe2dccf, grid: [0xb3aa96, 0xbfb7a5], dock: 0xbdb5a5, deck: 0x8d8a83, bloom: 0.18, particles: [0x2f2a22, 0.7] },
-  dark: { bg: 0x1d1c1f, fog: 0.04, exposure: 1.05, hemi: [0xfff2cc, 0x2a2a30, 0.7], key: 0.7, fill: 0.15, points: 2.6, strip: 0xfff3c4,
+  dark: { bg: 0x1d1c1f, fog: 0.032, exposure: 1.05, hemi: [0xfff2cc, 0x2a2a30, 0.7], key: 0.7, fill: 0.15, points: 2.6, strip: 0xfff3c4,
     floor: 0x2c2b2f, wall: 0x232327, grid: [0x4a4536, 0x36332a], dock: 0x3a3a40, deck: 0x3a3a40, bloom: 0.5, particles: [0xffd400, 0.5] },
 };
 const LOOK = {};
@@ -83,6 +83,10 @@ export function createScene(canvas, { mobile }) {
   let useBloom = !mobile; // свечение на телефоне выключено: днём его почти не видно, а стоит дорого
 
   let target = 0;
+  // наезд камеры, пока читают раздел: метры вдоль взгляда (0 — кадр как выставлен в редакторе)
+  let dollyTarget = 0;
+  let dolly = 0;
+  const dollyDir = new THREE.Vector3();
   let current = 0;
   let baseExposure = 1.0;
   let exposureK = 1; // множитель яркости — для заставки «включается свет»
@@ -142,6 +146,8 @@ export function createScene(canvas, { mobile }) {
     const pt = THREE.MathUtils.lerp(keyIdx[i0], keyIdx[i0 + 1], k - i0) / (STATIONS.length - 1);
     posCurve.getPoint(pt, camPos);
     lookCurve.getPoint(pt, camLook);
+    dolly += (dollyTarget - dolly) * 0.06;
+    if (Math.abs(dolly) > 0.001) camPos.add(dollyDir.subVectors(camLook, camPos).normalize().multiplyScalar(dolly));
     camPos.x += mouse.x * 0.6;
     camPos.y -= mouse.y * 0.35;
     camera.position.copy(camPos);
@@ -213,6 +219,8 @@ export function createScene(canvas, { mobile }) {
     stations: KEYS.length,
     keys: KEYS, // кадры локаций (pos/look/fov) — чтобы табло в «живом складе» смотрели в кадр
     setProgress(p) { target = p; },
+    setDolly(d) { dollyTarget = d; },
+    curve: posCurve, // путь камеры — чтобы ставить предметы переднего плана рядом с ним, но не на нём
     // для режима «мир»: стенды рисуются той же камерой
     camera,
     scene,

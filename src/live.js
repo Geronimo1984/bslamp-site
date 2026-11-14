@@ -189,6 +189,34 @@ export function initLive(scene3d, { lang, reduced }) {
   let flashAt = -1;
   document.addEventListener('order:posted', () => { orderB.redraw(true); flashAt = performance.now(); });
 
+  // ---------- передний план: подвесные лампы у самого пути камеры ----------
+  // ставятся между кадрами локаций, в 1,3 м сбоку от пути и выше глаз — проплывают у края кадра и дают глубину
+  if (scene3d.curve) {
+    const shadeMat = new THREE.MeshStandardMaterial({ color: 0x2c2b29, roughness: 0.5, metalness: 0.4 });
+    const bulbMat = new THREE.MeshBasicMaterial({ color: 0xfff1b0, toneMapped: false });
+    const shadeGeo = new THREE.ConeGeometry(0.28, 0.26, 20, 1, true);
+    const bulbGeo = new THREE.SphereGeometry(0.07, 12, 8);
+    const up = new THREE.Vector3(0, 1, 0);
+    [0.09, 0.26, 0.42, 0.58, 0.75, 0.92].forEach((tt, k) => {
+      const p = scene3d.curve.getPoint(tt);
+      const side = new THREE.Vector3().crossVectors(scene3d.curve.getTangent(tt), up).normalize();
+      const pos = p.clone().addScaledVector(side, k % 2 ? 1.3 : -1.3);
+      const y = Math.min(6.4, p.y + 1.1);
+      const lamp = new THREE.Group();
+      lamp.name = `Лампа переднего плана ${k + 1}`;
+      lamp.position.set(pos.x, y, pos.z);
+      const len = 7.9 - y;
+      const cord = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, len, 6), cableMat);
+      cord.position.y = len / 2 + 0.13;
+      const shade = new THREE.Mesh(shadeGeo, shadeMat);
+      shade.material.side = THREE.DoubleSide;
+      const bulb = new THREE.Mesh(bulbGeo, bulbMat);
+      bulb.position.y = -0.1;
+      lamp.add(cord, shade, bulb);
+      scene.add(lamp);
+    });
+  }
+
   // ---------- кадр: плавные мелочи ----------
   scene3d.onFrame((t) => {
     const now = performance.now();

@@ -305,6 +305,10 @@ function onScroll() {
   live?.setSection(atEnd ? SECTIONS[SECTIONS.length - 1] : SECTIONS[mid >= tops[i + 1] ? i + 1 : i]);
   const key = SECTION_KEY[i] + (SECTION_KEY[i + 1] - SECTION_KEY[i]) * eased;
   scene.setProgress(atEnd ? 1 : key / (KEY_COUNT - 1));
+  // проба «живого кадра» (только услуги): пока читают раздел, камера медленно подъезжает на 0,5 м,
+  // с началом перелёта наезд плавно уходит — сами перелёты не меняются
+  const DOLLY_SECTION = 'services';
+  scene.setDolly(SECTIONS[i] === DOLLY_SECTION ? 0.5 * Math.min(1, frac / 0.45) * (1 - eased) : 0);
 }
 let cameraBound = false;
 function bindCamera() {

@@ -656,3 +656,45 @@ h2 { font: 500 clamp(32px, 4.2vw, 54px)/1.08 var(--f-head); letter-spacing: -0.0
   .sticker { right: 8px; top: -14px; font-size: 13px; padding: 8px 11px; }
   .case-view { padding-top: 10px; }
 }
+
+/* ---------- погружение (компьютер): текст — колонка слева, склад справа открыт всегда ----------
+   Плашки во всю ширину убраны: текст лежит на мягкой вуали, карточками остаются только «окна»
+   (журнал кейсов, консоль, форма заявки) — и те узкие, слева. */
+@media (min-width: 1021px) {
+  body.has3d { --col: min(600px, 44vw); }
+  body.has3d .sec { max-width: none; margin: 0; padding-left: var(--pad-x); padding-right: var(--pad-x); }
+  body.has3d .sec > * { max-width: var(--col); }
+  body.has3d .sec-head { flex-direction: column; align-items: flex-start; }
+  body.has3d .final-title { font-size: clamp(44px, 5vw, 76px); }
+  /* вуаль под колонкой плотнее, справа сцена без пелены */
+  body.has3d .scene-shade {
+    background: linear-gradient(90deg, rgba(243, 239, 230, 0.9) 0%, rgba(243, 239, 230, 0.84) calc(var(--pad-x) + var(--col) - 40px), rgba(243, 239, 230, 0.3) calc(var(--pad-x) + var(--col) + 120px), rgba(243, 239, 230, 0) calc(var(--pad-x) + var(--col) + 260px));
+  }
+  :root[data-theme="dark"] body.has3d .scene-shade {
+    background: linear-gradient(90deg, rgba(27, 27, 30, 0.92) 0%, rgba(27, 27, 30, 0.86) calc(var(--pad-x) + var(--col) - 40px), rgba(27, 27, 30, 0.3) calc(var(--pad-x) + var(--col) + 120px), rgba(27, 27, 30, 0) calc(var(--pad-x) + var(--col) + 260px));
+  }
+  /* услуги: строки без подложки, «также делаем» — столбиком */
+  body.has3d .svc-list { background: transparent; }
+  body.has3d .also-grid { grid-template-columns: 1fr; }
+  /* кейсы: журнал — лентой над окном, как на планшете */
+  body.has3d .journal { grid-template-columns: 1fr; }
+  body.has3d .journal-head { display: none; }
+  body.has3d .journal-list { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; }
+  body.has3d .journal-row { flex: 0 0 auto; width: auto; max-width: 220px; grid-template-columns: auto 1fr; gap: 8px; border-bottom: 0; border-right: 1px solid #efece4; scroll-snap-align: start; }
+  body.has3d .j-name small { display: none; }
+  body.has3d .case-view { min-height: 0; }
+  /* этапы: описание под названием */
+  body.has3d .cr-row { grid-template-columns: 30px minmax(0, 1fr); row-gap: 2px; }
+  body.has3d .cr-t { grid-column: 2; }
+  /* о нас и контакты — прямо на вуали */
+  body.has3d .about { grid-template-columns: 1fr; gap: 28px; padding: 0; background: transparent; border: 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  body.has3d .order-wrap { grid-template-columns: 1fr; }
+  body.has3d .contacts { background: transparent; border: 0; padding: 8px 0 0; backdrop-filter: none; -webkit-backdrop-filter: none; }
+}
+
+/* виньетка: края кадра чуть темнее — взгляд уходит в глубину склада */
+body.has3d .scene-shade::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none;
+  background: radial-gradient(120% 95% at 62% 48%, transparent 55%, rgba(31, 29, 25, 0.22) 100%);
+}
+:root[data-theme="dark"] body.has3d .scene-shade::after { background: radial-gradient(120% 95% at 62% 48%, transparent 50%, rgba(0, 0, 0, 0.5) 100%); }
