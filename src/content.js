@@ -56,6 +56,15 @@ export const TEXT = {
         { icon: 'support', title: 'Сопровождение', text: 'Абонентская поддержка базы: ошибки, мелкие доработки, обновления, консультации.' },
         { icon: 'auto', title: 'Автоматизация процессов', text: 'Автозаказ, рабочие места сотрудников, аналитика — убираем рутину из ежедневной работы.' },
       ],
+      // короткие примеры кода к услугам (глава «Услуги»): иллюстрация, не реальный код клиентов
+      codes: [
+        '&После("ПриСозданииНаСервере")\nПроцедура ДобавитьПечатьТТН(Отказ)\n\tДобавитьКомандуПечати("ТТН"); // без снятия с поддержки\nКонецПроцедуры',
+        'Ответ  = Соединение.Получить(ЗапросЗаказов);\nЗаказы = ПрочитатьJSON(Ответ.ПолучитьТелоКакСтроку());\nЗагрузитьЗаказы(Заказы); // без ручного ввода',
+        'Штрихкод = ТСД.Сканировать();\nТовар    = НайтиПоШтрихкоду(Штрихкод);\nПриемка.Добавить(Товар, 1); // сразу в 1С',
+        'Перенос = Новый ПереносДанных("УТ 10.3", "УТ 11");\nПеренос.Проверить();\nПеренос.Выполнить(); // доработки сохранены',
+        'Если Ошибка.Найдена() Тогда\n\tИсправить(Ошибка); // в тот же день\n\tОбновитьБазу();\nКонецЕсли;',
+        'Потребность = Продажи - Остаток + СтраховойЗапас;\nЕсли Потребность > 0 Тогда\n\tСоздатьЗаказПоставщику(Потребность);\nКонецЕсли;',
+      ],
       alsoTitle: 'Также делаем',
       also: [
         { title: 'Разработка с ИИ', text: 'Используем ИИ-инструменты в работе — задачи закрываются быстрее, а значит дешевле для вас.' },
@@ -181,6 +190,14 @@ export const TEXT = {
         { icon: 'migrate', title: 'Migrations & updates', text: 'Trade 10.3 → 11, moving to KA and ERP, updating customised configurations.' },
         { icon: 'support', title: 'Support', text: 'Ongoing database support: bugs, small changes, updates, advice.' },
         { icon: 'auto', title: 'Process automation', text: 'Auto-ordering, staff workplaces, analytics — routine out of everyday work.' },
+      ],
+      codes: [
+        '&After("OnCreateAtServer")\nProcedure AddWaybillPrint(Cancel)\n\tAddPrintCommand("Waybill"); // stays on vendor support\nEndProcedure',
+        'Response = Connection.Get(OrdersRequest);\nOrders   = ReadJSON(Response.GetBodyAsString());\nLoadOrders(Orders); // no manual entry',
+        'Barcode = Scanner.Scan();\nItem    = FindByBarcode(Barcode);\nReceipt.Add(Item, 1); // straight into 1C',
+        'Migration = New DataMigration("UT 10.3", "UT 11");\nMigration.Check();\nMigration.Run(); // customizations kept',
+        'If Error.Found() Then\n\tFix(Error); // same day\n\tUpdateDatabase();\nEndIf;',
+        'Demand = Sales - Stock + SafetyStock;\nIf Demand > 0 Then\n\tCreatePurchaseOrder(Demand);\nEndIf;',
       ],
       alsoTitle: 'We also do',
       also: [

@@ -29,9 +29,12 @@ const CODE = {
 EndProcedure`,
 };
 
-const KEYWORDS = /^(Процедура|КонецПроцедуры|Экспорт|Если|Тогда|КонецЕсли|НЕ|Procedure|EndProcedure|Export|If|Then|EndIf|NOT)$/;
+const KEYWORDS = /^(Процедура|КонецПроцедуры|Экспорт|Если|Тогда|КонецЕсли|НЕ|Новый|Procedure|EndProcedure|Export|If|Then|EndIf|NOT|New)$/;
 
 function highlight(line) {
+  // комментарий // … до конца строки — отдельным цветом, как в конфигураторе
+  const ci = line.indexOf('//');
+  if (ci >= 0) return highlight(line.slice(0, ci)) + `<span class="b-cm">${line.slice(ci).replace(/&/g, '&amp;').replace(/</g, '&lt;')}</span>`;
   const out = [];
   const re = /("[^"]*"?)|([A-Za-zА-Яа-яЁё_][\wА-Яа-яЁё]*)|(\s+)|(.)/g;
   let m;
@@ -41,6 +44,7 @@ function highlight(line) {
     if (str) out.push(`<span class="b-str">${safe}</span>`);
     else if (word && KEYWORDS.test(word)) out.push(`<span class="b-kw">${safe}</span>`);
     else if (word && line[re.lastIndex] === '(') out.push(`<span class="b-fn">${safe}</span>`);
+    else if (tok === '&' && /^&[A-Za-zА-Яа-я]/.test(line.slice(m.index))) out.push('<span class="b-kw">&amp;</span>');
     else if (/[();=.,]/.test(tok)) out.push(`<span class="b-op">${safe}</span>`);
     else out.push(safe);
   }
@@ -67,4 +71,9 @@ export function typeBsl(el, lang, instant) {
     render(n);
     if (n >= text.length) clearInterval(el._timer);
   }, 28);
+}
+
+// готовый фрагмент кода с номерами строк и подсветкой (без печати) — для окон в главах
+export function bslHtml(code) {
+  return code.split('\n').map((ln, i) => `<span class="b-ln">${i + 1}</span>${highlight(ln)}`).join('\n');
 }

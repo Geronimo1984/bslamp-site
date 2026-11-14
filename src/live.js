@@ -25,11 +25,13 @@ export function initLive(scene3d, { lang, reduced }) {
     const tex = new THREE.CanvasTexture(c);
     tex.colorSpace = THREE.SRGBColorSpace;
     tex.anisotropy = 4;
-    const redraw = (...a) => { g.clearRect(0, 0, w, h); draw(g, w, h, ...a); tex.needsUpdate = true; };
+    // save/restore: выравнивание и шрифт прошлой отрисовки не переносятся в следующую
+    const redraw = (...a) => { g.clearRect(0, 0, w, h); g.save(); draw(g, w, h, ...a); g.restore(); tex.needsUpdate = true; };
     return { tex, redraw };
   }
   function plate(tex, w, h) {
-    const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false });
+    // fog: false — дымка склада не «съедает» табло, они читаются как светящиеся экраны
+    const mat = new THREE.MeshBasicMaterial({ map: tex, transparent: true, toneMapped: false, fog: false });
     return new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
   }
   // табло висит на двух тросах и повёрнуто к кадру своей локации (stations: 0 вход … 5 заявка)
@@ -118,7 +120,8 @@ export function initLive(scene3d, { lang, reduced }) {
   tick.redraw();
   // значок рисуется поверх всего (depthTest: false) и левее ТСД — не «проходит» сквозь модель
   const tickSprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: tick.tex, transparent: true, opacity: 0, depthWrite: false, depthTest: false, toneMapped: false }));
-  tickSprite.scale.set(1.1, 0.34, 1);
+  tickSprite.scale.set(1.3, 0.4, 1);
+  tickSprite.material.fog = false;
   tickSprite.renderOrder = 10;
   tickSprite.visible = false;
   scene.add(tickSprite);
@@ -147,8 +150,8 @@ export function initLive(scene3d, { lang, reduced }) {
     }
   });
   ship.redraw(0);
-  const shipBoard = plate(ship.tex, 2.4, 0.6);
-  hang(shipBoard, [-4.4, 3.7, -26], 3);
+  const shipBoard = plate(ship.tex, 3.2, 0.8);
+  hang(shipBoard, [-3.37, 2.9, -20.67], 3); // ближе к кадру этапов, справа от текста
   let shipN = 0;
   let shipTimer = null;
   function shipTo(n) {
@@ -173,12 +176,13 @@ export function initLive(scene3d, { lang, reduced }) {
     g.fillText(ru ? '1С · ОНЛАЙН' : '1C · ONLINE', 136, h / 2);
   });
   status.redraw();
-  const statusBoard = plate(status.tex, 2.0, 0.43);
+  const statusBoard = plate(status.tex, 2.4, 0.52);
   const dotMat = new THREE.MeshBasicMaterial({ color: 0xffd400, transparent: true, toneMapped: false });
-  const dot = new THREE.Mesh(new THREE.CircleGeometry(0.05, 20), dotMat);
-  dot.position.set(-1.0 + (78 / 1024) * 2.0, 0, 0.005);
+  const dot = new THREE.Mesh(new THREE.CircleGeometry(0.065, 20), dotMat);
+  const sw = statusBoard.geometry.parameters.width;
+  dot.position.set(-sw / 2 + (78 / 1024) * sw, 0, 0.005); // точка — на месте кружка в текстуре
   statusBoard.add(dot);
-  hang(statusBoard, [11.4, 2.75, -29.4], 4); // перед стойками серверной, справа вверху кадра
+  hang(statusBoard, [9.01, 2.6, -30.07], 4); // перед стойками серверной, крупно в кадре «О нас»
 
   // ---------- 5. табло заявки (заявка) ----------
   const orderB = board(1024, 256, (g, w, h, posted) => {
@@ -193,7 +197,7 @@ export function initLive(scene3d, { lang, reduced }) {
   });
   orderB.redraw(false);
   const orderBoard = plate(orderB.tex, 2.6, 0.65);
-  hang(orderBoard, [2.5, 5.0, -8.2], 5);
+  hang(orderBoard, [2.33, 4.85, -8.23], 5); // над стеллажом (верх 4,4 м), в 1,7 м от пути камеры
   let flashAt = -1;
   document.addEventListener('order:posted', () => { orderB.redraw(true); flashAt = performance.now(); });
 

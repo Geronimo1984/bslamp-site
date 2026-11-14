@@ -758,3 +758,43 @@ body.has3d .sec .kicker, body.has3d .hero-text .kicker, body.has3d .also-title {
 .ch-ticks i.on { background: var(--yellow); }
 :root[data-theme="dark"] .ch-ticks i { background: rgba(255, 255, 255, 0.18); }
 :root[data-theme="dark"] .ch-ticks i.on { background: var(--yellow); }
+
+/* ---------- «окно BSLamp»: фирменная рамка формы 1С — единый компонент для глав ----------
+   Строгая светлая форма (как «Такси», но аккуратнее): тонкая строка заголовка с лампочкой,
+   внутри крупная типографика сайта и пример BSL-кода, внизу строка состояния. Светлая в обеих темах — как в самой 1С. */
+.w1c {
+  background: var(--taxi-bg); color: var(--taxi-ink); border: 1px solid var(--taxi-line);
+  border-radius: var(--r-m); overflow: hidden; box-shadow: var(--sh-window);
+  --muted: #55514a; --dim: #8a857a; --ink: var(--taxi-ink);
+}
+.w1c * { text-shadow: none !important; }
+.w1c-bar {
+  display: flex; align-items: center; gap: 10px; height: 38px; padding: 0 12px 0 14px;
+  background: linear-gradient(#f7f4ec, #eeeadf); border-bottom: 1px solid var(--taxi-line); font-size: 13px;
+}
+.w1c-bar b { font-weight: 600; }
+.w1c-logo { width: 14px; height: 14px; border-radius: 50%; background: var(--yellow); box-shadow: inset 0 0 0 2px #1f1d19, 0 0 10px rgba(255, 212, 0, 0.6); }
+.w1c-path { font: 400 12px var(--f-mono); color: #7a756b; font-style: normal; }
+.w1c-ctl { margin-left: auto; display: flex; gap: 6px; }
+.w1c-ctl i { width: 11px; height: 11px; border: 1.5px solid #b9b3a5; border-radius: 3px; }
+.w1c .ch-steps { padding: 30px 34px 28px; }
+.w1c .ch-num { text-shadow: none; margin-bottom: 14px; }
+.w1c .ch-num b { font-size: clamp(44px, 4.4vw, 64px); }
+.w1c .ch-title { font-size: clamp(28px, 2.7vw, 40px); margin-bottom: 12px; }
+.w1c .ch-text { font-size: 18px; color: #55514a; }
+.w1c-code {
+  margin: 22px 0 0; padding: 14px 16px; border-radius: var(--r-s); min-height: 0;
+  background: var(--console); color: var(--console-ink); font: 400 13px/1.7 var(--f-mono); white-space: pre; overflow-x: auto; tab-size: 3;
+}
+.b-cm { color: #7f9a7a; font-style: italic; }
+.w1c .ch-also li { background: #fff; box-shadow: none; }
+.w1c-status {
+  display: flex; align-items: center; gap: 16px; padding: 10px 14px; min-height: 40px;
+  background: var(--taxi-bar); border-top: 1px solid var(--taxi-line); font: 400 12px var(--f-mono); color: #66625a;
+}
+.w1c-status .ch-rate { padding: 0; background: none; border: 0; box-shadow: none; display: inline; }
+.w1c-status .ch-rate strong { font: 600 13px var(--f-mono); color: var(--taxi-ink); }
+.w1c-status .ch-ticks { margin-left: auto; }
+.w1c .ch-ticks i { width: 16px; background: #d9d4c7; }
+.w1c .ch-ticks i.on { background: var(--yellow); }
+.ch-col { gap: 18px; }
