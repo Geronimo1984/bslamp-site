@@ -29,7 +29,7 @@ const CODE = {
 EndProcedure`,
 };
 
-const KEYWORDS = /^(Процедура|КонецПроцедуры|Экспорт|Если|Тогда|КонецЕсли|НЕ|Новый|ВЫБРАТЬ|ИЗ|ГДЕ|Procedure|EndProcedure|Export|If|Then|EndIf|NOT|New|SELECT|FROM|WHERE)$/;
+const KEYWORDS = /^(Процедура|КонецПроцедуры|Экспорт|Если|Тогда|КонецЕсли|НЕ|Новый|ВЫБРАТЬ|ИЗ|ГДЕ|Пока|Цикл|КонецЦикла|Procedure|EndProcedure|Export|If|Then|EndIf|NOT|New|SELECT|FROM|WHERE|While|Do|EndDo)$/;
 
 function highlight(line) {
   // комментарий // … до конца строки — отдельным цветом, как в конфигураторе

@@ -130,7 +130,7 @@ function processChapter(t, live) {
     <p class="ch-num"><b>${pad(k + 1)}</b><span>/ ${pad(n)}</span></p>
     <h3 class="ch-title">${esc(st.title)}</h3>
     <p class="ch-text">${esc(st.text)}</p>
-    <pre class="w1c-code bsl">${bslHtml(`${query} // ${ru ? 'этап' : 'stage'} ${k + 1} ${ru ? 'из' : 'of'} ${n}`)}</pre>`);
+    <pre class="w1c-code bsl">${bslHtml(p.codes?.[k] ?? query)}</pre>`); // у каждого этапа свой фрагмент кода
   return makeChapter({
     id: 'process', kicker: p.kicker, title: p.title, path: p.console, of: ru ? 'из' : 'of',
     steps, dollyStep: 0.25,

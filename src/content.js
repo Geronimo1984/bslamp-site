@@ -97,6 +97,15 @@ export const TEXT = {
         ['ИЗ', 'ВашБизнес'],
         ['ГДЕ', 'Рутина > 0'],
       ],
+      // свой фрагмент кода к каждому этапу (глава «Этапы»): иллюстрация, не реальный код клиентов
+      codes: [
+        'Задача = Новый Структура("Боль, Конфигурация, КакНадо");\nЗадача.Конфигурация = "ERP 2.5";\nСозвон(Задача); // коротко и по делу',
+        'ТЗ = СоставитьТЗ(Задача);\nТЗ.Срок      = ОценитьСрок(ТЗ);\nТЗ.Стоимость = ОценитьСтоимость(ТЗ); // фиксируем заранее',
+        '&Перед("ПередЗаписью")\nПроцедура Расш_ПередЗаписьюПеред(Отказ)\n\tПроверитьЗаполнение(Отказ); // по стандартам ИТС\nКонецПроцедуры',
+        'Копия = СоздатьКопию(РабочаяБаза);\nИтог  = Протестировать(Решение, Копия);\nЕсли НЕ Итог.Успех Тогда\n\tИсправить(Итог.Ошибки);\nКонецЕсли;',
+        'Обновить(РабочаяБаза, Решение);\nНаписатьИнструкцию(Решение);\nОбучитьПользователей(); // вместе с вами',
+        'Пока Сотрудничаем Цикл\n\tПоддержать(ВашаБаза); // обновления, доработки\nКонецЦикла;',
+      ],
       steps: [
         { op: '// 1', title: 'Разбираем задачу', text: 'Короткий созвон: что болит, какая конфигурация, как должно быть.' },
         { op: '// 2', title: 'Оцениваем и пишем ТЗ', text: 'Фиксируем объём, сроки и стоимость — без сюрпризов в конце.' },
@@ -230,6 +239,14 @@ export const TEXT = {
         ['SELECT', 'Task'],
         ['FROM', 'YourBusiness'],
         ['WHERE', 'Routine > 0'],
+      ],
+      codes: [
+        'Task = New Structure("Pain, Configuration, ToBe");\nTask.Configuration = "ERP 2.5";\nCall(Task); // short and to the point',
+        'Spec = WriteSpec(Task);\nSpec.Deadline = EstimateTime(Spec);\nSpec.Price    = EstimatePrice(Spec); // fixed upfront',
+        '&Before("BeforeWrite")\nProcedure Ext_BeforeWriteBefore(Cancel)\n\tCheckFilling(Cancel); // by 1C standards\nEndProcedure',
+        'Copy   = CreateCopy(LiveDatabase);\nResult = Test(Solution, Copy);\nIf NOT Result.Success Then\n\tFix(Result.Errors);\nEndIf;',
+        'Update(LiveDatabase, Solution);\nWriteGuide(Solution);\nTrainUsers(); // together with you',
+        'While WeWorkTogether Do\n\tSupport(YourDatabase); // updates, improvements\nEndDo;',
       ],
       steps: [
         { op: '// 1', title: 'Understand the task', text: 'A short call: what hurts, which configuration, what it should be.' },
