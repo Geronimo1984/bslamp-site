@@ -84,6 +84,10 @@ export function createScene(canvas, { mobile }) {
 
   let target = 0;
   let current = 0;
+  let baseExposure = 1.0;
+  let exposureK = 1; // множитель яркости — для заставки «включается свет»
+  const frameHooks = [];
+  const resizeHooks = [];
   const mouse = new THREE.Vector2();
   const camPos = new THREE.Vector3();
   const camLook = new THREE.Vector3();
@@ -96,6 +100,7 @@ export function createScene(canvas, { mobile }) {
     bloom.resolution.set(w / 2, h / 2);
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
+    resizeHooks.forEach((f) => f(w, h));
   }
   resize();
   window.addEventListener('resize', resize);
@@ -153,8 +158,10 @@ export function createScene(canvas, { mobile }) {
     barcodes.update(t);
     backdrop.update(t);
 
+    renderer.toneMappingExposure = baseExposure * exposureK;
     if (useBloom) composer.render();
     else renderer.render(scene, camera);
+    frameHooks.forEach((f) => f(t, camera));
     watchFps(now);
   }
   requestAnimationFrame(frame);
@@ -174,7 +181,7 @@ export function createScene(canvas, { mobile }) {
     scene.fog.color.setHex(th.bg);
     scene.fog.density = th.fog;
     renderer.setClearColor(th.bg, 1);
-    renderer.toneMappingExposure = th.exposure;
+    baseExposure = th.exposure;
     LOOK.hemi.color.setHex(th.hemi[0]);
     LOOK.hemi.groundColor.setHex(th.hemi[1]);
     LOOK.hemi.intensity = th.hemi[2];
@@ -205,6 +212,14 @@ export function createScene(canvas, { mobile }) {
     setTheme,
     stations: KEYS.length,
     setProgress(p) { target = p; },
+    // для режима «мир»: стенды рисуются той же камерой
+    camera,
+    scene,
+    THREE,
+    onFrame(f) { frameHooks.push(f); },
+    onResize(f) { resizeHooks.push(f); f(window.innerWidth, window.innerHeight); },
+    setExposure(k) { exposureK = k; },
+    isMoving() { return Math.abs(target - current) > 0.002; },
   };
 }
 

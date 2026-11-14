@@ -253,6 +253,92 @@ section[id] { scroll-margin-top: 64px; }
   .top-actions .theme-btn, .top-actions .lang { display: none; } /* тема и язык — в меню */
 }
 
+/* =========================================================
+   Режим «мир»: стенды в 3D, перемещение по шагам
+   ========================================================= */
+body.world { overflow: hidden; height: 100vh; height: 100dvh; }
+body.world main, body.world .foot { display: none; }
+body.world .scene-shade { display: none; }
+#world-css { position: fixed; inset: 0; z-index: 3; pointer-events: none; }
+#world-css .stand { pointer-events: auto; transition: opacity 0.25s; }
+
+/* стенд-табло: лист бумаги в тёмной раме (рама — в 3D) */
+.stand-board {
+  background: var(--paper); color: var(--ink); border-radius: 14px; padding: 56px 60px;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.stand-hero .kicker { font-size: 18px; margin-bottom: 22px; }
+.stand-hero h1 { font: 500 66px/1.06 var(--f-head); letter-spacing: -0.025em; margin-bottom: 26px; }
+.stand-hero .mark { background: linear-gradient(transparent 58%, var(--yellow) 58%, var(--yellow) 92%, transparent 92%); padding: 0 0.08em; color: var(--mark-ink); }
+:root[data-theme="dark"] .stand-hero .mark { background: var(--yellow); border-radius: 6px; }
+.stand-hero .lead { font-size: 22px; color: var(--muted); margin-bottom: 34px; max-width: none; }
+.stand-hero .cta .btn { font-size: 19px; padding: 18px 30px; }
+.stand-soon { text-align: center; padding: 40px; }
+.stand-soon h2 { font-size: 48px; margin: 8px 0; }
+.stand-soon .kicker { justify-content: center; }
+.stand-soon .lead { margin: 0; font-size: 18px; }
+
+/* стенд-монитор с BSL-кодом */
+.stand-monitor { background: #1d1c1a; color: var(--console-ink); border-radius: 12px; overflow: hidden; box-shadow: 0 0 0 10px #2c2b29; }
+.stand-monitor .bsl { min-height: 330px; font-size: 15px; }
+
+/* мини-карта склада */
+#world-map {
+  position: fixed; right: 22px; top: 50%; transform: translateY(-50%); z-index: 8;
+  display: grid; gap: 14px; padding: 12px 8px; border-radius: 999px; background: var(--top-bg); border: 1px solid var(--line);
+}
+.wm-dot { position: relative; width: 14px; height: 14px; border-radius: 50%; padding: 0; border: 2px solid var(--dim); background: transparent; cursor: pointer; transition: all 0.25s; }
+.wm-dot.on { background: var(--yellow); border-color: #c9a400; transform: scale(1.25); }
+.wm-label {
+  position: absolute; right: 26px; top: 50%; transform: translateY(-50%); white-space: nowrap; font: 500 13px var(--f-body);
+  background: var(--paper); color: var(--ink); border: 1px solid var(--line); padding: 4px 10px; border-radius: 999px;
+  opacity: 0; pointer-events: none; transition: opacity 0.2s;
+}
+.wm-dot:hover .wm-label, .wm-dot.on .wm-label { opacity: 1; }
+
+/* подсказка «листайте» */
+#world-hint {
+  position: fixed; left: 50%; bottom: 26px; transform: translateX(-50%); z-index: 8; display: flex; align-items: center; gap: 10px;
+  padding: 10px 18px; border-radius: 999px; background: var(--top-bg); border: 1px solid var(--line); font: 500 14px var(--f-body); color: var(--ink);
+  transition: opacity 0.5s, transform 0.5s;
+}
+#world-hint.gone { opacity: 0; transform: translate(-50%, 12px); pointer-events: none; }
+.wh-mouse { width: 16px; height: 24px; border: 2px solid currentColor; border-radius: 9px; position: relative; }
+.wh-mouse::after { content: ''; position: absolute; left: 50%; top: 4px; width: 2px; height: 5px; margin-left: -1px; background: currentColor; border-radius: 2px; animation: wheel 1.4s infinite; }
+@keyframes wheel { 0% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(7px); } }
+
+/* заставка: загорается лампочка */
+#world-splash {
+  position: fixed; inset: 0; z-index: 200; display: grid; place-content: center; justify-items: center; gap: 14px;
+  background: #121214; cursor: pointer; transition: opacity 0.6s; --glow: 0;
+}
+#world-splash svg { width: 84px; height: 84px; filter: drop-shadow(0 0 calc(var(--glow) * 40px) rgba(255, 212, 0, calc(var(--glow) * 0.9))); }
+#world-splash .bulb { fill: #ffd400; opacity: calc(0.15 + var(--glow) * 0.85); }
+#world-splash .filament { fill: #1f1d19; }
+#world-splash .base { fill: #e5332a; }
+#world-splash b { font: 600 26px var(--f-head); color: #f1eee6; opacity: var(--glow); }
+#world-splash b i { font-style: normal; color: #ff7a6e; }
+#world-splash.off { opacity: 0; pointer-events: none; }
+
+/* карточка-«диалог» снизу — только телефон */
+.world-sheet { display: none; }
+@media (max-width: 760px) {
+  body.world #world-css .stand-hero .lead, body.world #world-css .stand-hero .cta, body.world #world-css .stand-hero .kicker { display: none; }
+  #world-map { right: auto; left: 50%; top: 72px; transform: translateX(-50%); grid-auto-flow: column; padding: 8px 12px; }
+  .wm-label { display: none; }
+  #world-hint { bottom: auto; top: 112px; font-size: 13px; }
+  .world-sheet {
+    display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 7; max-height: 56vh; overflow-y: auto;
+    background: var(--bg); border-radius: 22px 22px 0 0; box-shadow: 0 -18px 40px -20px rgba(0, 0, 0, 0.35);
+    padding: 8px 0 max(16px, env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+  .world-sheet.open { transform: none; }
+  .world-sheet::before { content: ''; display: block; width: 44px; height: 5px; border-radius: 3px; background: var(--line); margin: 4px auto 6px; }
+  .world-sheet section { min-height: 0 !important; padding: 14px 16px 18px !important; }
+  .world-sheet .hero { display: block; }
+  .world-sheet .hero .code-card, .world-sheet .scroll-hint, .world-sheet .pause { display: none; }
+}
+
 /* плавная смена темы */
 body, .top, .svc-list, .about, .contacts, .rate, .also, .stat, .founder, .foot { transition: background-color 0.4s, color 0.4s, border-color 0.4s; }
 

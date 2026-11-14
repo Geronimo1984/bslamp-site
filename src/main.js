@@ -19,6 +19,7 @@ const KEY_COUNT = 6;
 let lang = pickLang();
 let theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'; // по умолчанию светлая
 let scene = null;
+let world = null; // режим «мир»: стенды в 3D (выключен, если 3D нет)
 
 function pickLang() {
   const q = new URLSearchParams(location.search).get('lang');
@@ -79,6 +80,55 @@ function render() {
   typeBsl(document.getElementById('bsl'), lang, reduced);
   initOrder(document.querySelector('.order'), t.order, lang);
   animate();
+  if (world) {
+    world.refresh({ t, lang });
+    syncSheet();
+  }
+}
+
+// ---------- режим «мир»: интерфейс поверх сцены (мини-карта, подсказка, заставка, карточка на телефоне) ----------
+const WORLD_IDS = ['hero', 'services', 'cases', 'process', 'about', 'order'];
+let sheetId = null;
+
+function worldChrome() {
+  const t = TEXT[lang];
+  const names = [lang === 'ru' ? 'Вход' : 'Entrance', t.nav.services, t.nav.cases, t.nav.process, t.nav.about, t.nav.order];
+  document.body.insertAdjacentHTML('beforeend', `
+    <div id="world-css" aria-hidden="false"></div>
+    <nav id="world-map" aria-label="${lang === 'ru' ? 'Карта склада' : 'Warehouse map'}">
+      ${names.map((n, i) => `<button type="button" class="wm-dot" aria-label="${esc(n)}"><span class="wm-label">${n}</span></button>`).join('')}
+    </nav>
+    <div id="world-hint" aria-hidden="true"><span class="wh-mouse"></span>${mobile ? (lang === 'ru' ? 'Свайп вверх — дальше' : 'Swipe up to continue') : (lang === 'ru' ? 'Листайте — едем по складу' : 'Scroll to move through the warehouse')}</div>
+    <aside id="world-sheet" class="world-sheet" aria-live="polite"></aside>
+    <div id="world-splash"><svg viewBox="0 0 32 32" aria-hidden="true"><path class="bulb" d="M16 3.5a9 9 0 0 0-5.4 16.2c.9.7 1.4 1.7 1.4 2.8V24h8v-1.5c0-1.1.5-2.1 1.4-2.8A9 9 0 0 0 16 3.5z"/><g class="filament"><rect x="12" y="9" width="1.4" height="9"/><rect x="14.4" y="9" width=".8" height="9"/><rect x="16.2" y="9" width="2" height="9"/><rect x="19.1" y="9" width=".8" height="9"/></g><rect class="base" x="12" y="25.5" width="8" height="3" rx="1.2"/></svg><b>BSL<i>amp</i></b></div>`);
+}
+
+// на телефоне содержимое локации выезжает снизу: в карточку переносится сама секция (с её кнопками и формой)
+function syncSheet(id = sheetId) {
+  if (!mobile || !world) return;
+  const sheet = document.getElementById('world-sheet');
+  const back = sheet.querySelector('section');
+  if (back) document.querySelector('main').append(back);
+  sheetId = id;
+  const sec = id && document.getElementById(id);
+  if (!sec) return;
+  // в карточке нет прокрутки страницы — анимации «по скроллу» показываем сразу
+  sec.querySelectorAll('.reveal').forEach((el) => el.classList.add('in'));
+  gsap.killTweensOf(sec.querySelectorAll('.ch'));
+  gsap.set(sec.querySelectorAll('.ch'), { opacity: 1, yPercent: 0 });
+  sheet.append(sec);
+  sheet.scrollTop = 0;
+  sheet.classList.add('open');
+  if (id === 'process') startConsole();
+}
+
+async function initWorldMode() {
+  if (!scene || reduced) return;
+  worldChrome();
+  const { initWorld } = await import('./world.js');
+  world = initWorld(scene, { t: TEXT[lang], lang, mobile, typeBsl, reduced });
+  document.addEventListener('world:location', (e) => syncSheet(e.detail.id));
+  syncSheet('hero');
 }
 
 function animate() {
@@ -204,6 +254,7 @@ function initCases(t) {
   show(0);
 }
 
+let startConsole = () => {};
 // Консоль запросов: текст запроса печатается, строки результата появляются по одной
 function initConsole() {
   const q = document.getElementById('console-query');
@@ -218,20 +269,21 @@ function initConsole() {
     return;
   }
   paint(0);
-  ScrollTrigger.create({
-    trigger: '.console', start: 'top 70%', once: true,
-    onEnter: () => {
-      let n = 0;
-      const timer = setInterval(() => {
-        n += 2;
-        paint(n);
-        if (n >= text.length) {
-          clearInterval(timer);
-          rows.forEach((r, i) => setTimeout(() => r.classList.add('in'), 200 + i * 160));
-        }
-      }, 30);
-    },
-  });
+  let started = false;
+  startConsole = () => {
+    if (started) return;
+    started = true;
+    let n = 0;
+    const timer = setInterval(() => {
+      n += 2;
+      paint(n);
+      if (n >= text.length) {
+        clearInterval(timer);
+        rows.forEach((r, i) => setTimeout(() => r.classList.add('in'), 200 + i * 160));
+      }
+    }, 30);
+  };
+  ScrollTrigger.create({ trigger: '.console', start: 'top 70%', once: true, onEnter: startConsole });
 }
 
 // Камера: доля пути между кадрами по положению секций; у каждого кадра — «задержка»
@@ -240,6 +292,7 @@ function measure() {
   tops = SECTIONS.map((id) => document.getElementById(id).offsetTop);
 }
 function onScroll() {
+  if (world) return; // в режиме «мир» камерой управляют шаги, не прокрутка
   const mid = scrollY + innerHeight * 0.5;
   let i = 0;
   while (i < tops.length - 2 && mid >= tops[i + 1]) i++;
@@ -329,8 +382,9 @@ async function initScene() {
   }
 }
 
-initScene().then(() => {
+initScene().then(async () => {
   applyTheme(theme, false);
   render();
   initCursor();
+  await initWorldMode();
 });
