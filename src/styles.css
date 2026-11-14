@@ -728,9 +728,10 @@ body.has3d .sec .kicker, body.has3d .hero-text .kicker, body.has3d .also-title {
 .rate, .also, .stat, .founder { box-shadow: var(--sh-card); }
 
 /* ---------- глава «Услуги»: закреплённый экран, прокрутка ведёт по шагам ---------- */
-#services.chapter-on { height: 820vh; padding: 0; max-width: none; margin: 0; }
-#services.chapter-on > :not(.ch-stick) { display: none; }
-#services.chapter-on > .ch-stick { max-width: none; }
+/* высота главы: по 80vh на шаг + экран на перелёт */
+.sec.chapter-on { height: calc(var(--ch-steps, 7) * 80vh + 150vh); padding: 0; max-width: none; margin: 0; }
+.sec.chapter-on > :not(.ch-stick) { display: none; }
+body.has3d .sec.chapter-on > .ch-stick { max-width: none; }
 .ch-stick { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; padding: 96px var(--pad-x) 48px; box-sizing: border-box; }
 .ch-col { width: var(--col, 600px); display: flex; flex-direction: column; gap: 28px; transition: opacity 0.2s linear; }
 .ch-steps { display: grid; }
@@ -798,3 +799,33 @@ body.has3d .sec .kicker, body.has3d .hero-text .kicker, body.has3d .also-title {
 .w1c .ch-ticks i { width: 16px; background: #d9d4c7; }
 .w1c .ch-ticks i.on { background: var(--yellow); }
 .ch-col { gap: 18px; }
+
+/* компактное окно главы: не громче сцены — узкое, плотное, справа от него склад открыт */
+.ch-col { width: min(470px, 36vw); }
+.w1c .ch-steps { padding: 22px 26px 20px; }
+.w1c .ch-num { margin-bottom: 10px; align-items: center; }
+.w1c .ch-num b { font-size: clamp(34px, 3vw, 44px); }
+.w1c .ch-num b::after { height: 4px; margin-top: 6px; }
+.w1c .ch-title { font-size: clamp(22px, 1.9vw, 28px); margin-bottom: 8px; }
+.w1c .ch-text { font-size: 16px; }
+.w1c-code { margin-top: 16px; padding: 11px 13px; font-size: 12px; }
+.ch-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ch-list li { padding: 10px 14px; border-radius: var(--r-s); background: #fff; border: 1px solid var(--taxi-line); }
+.ch-list li b { display: block; font-weight: 600; font-size: 15px; }
+.ch-list li span { color: #55514a; font-size: 14px; }
+.ch-sticker { margin-left: auto; font: 600 12px var(--f-mono); font-style: normal; padding: 5px 10px; border-radius: 999px; background: var(--yellow); color: #17150a; transform: rotate(-2deg); }
+.ch-meta { font: 400 12px var(--f-mono); color: #7a756b; margin-bottom: 12px; }
+.ch-rows { display: grid; grid-template-columns: 86px 1fr; gap: 8px 12px; margin: 0; font-size: 14.5px; line-height: 1.5; }
+.ch-rows dt { font: 500 11px var(--f-mono); text-transform: uppercase; letter-spacing: 0.08em; color: #8a857a; padding-top: 3px; }
+.ch-rows dd { margin: 0; color: #3f3c36; }
+.ch-rows .ch-result { font-weight: 600; color: var(--taxi-ink); background: var(--yellow-soft); padding: 4px 8px; border-radius: 6px; margin-left: -8px; }
+.w1c-status { min-height: 34px; padding: 8px 12px; }
+
+/* окна «Такси» (заявка) — та же шапка, что у «окна BSLamp»: лампочка вместо звёздочки, мягкий градиент */
+.win { box-shadow: var(--sh-window); }
+.win-title { align-items: center; background: linear-gradient(#f7f4ec, #eeeadf); min-height: 38px; padding: 6px 12px 6px 14px; }
+.win-title-text { font-size: 13px; padding-top: 0; }
+.win-nav .star { display: none; }
+.win-nav::before { content: ''; width: 14px; height: 14px; border-radius: 50%; background: var(--yellow); box-shadow: inset 0 0 0 2px #1f1d19, 0 0 10px rgba(255, 212, 0, 0.6); }
+.win-ctl i { font-size: 12px; }
+@media (min-width: 1021px) { body.has3d .order { max-width: 520px; } }

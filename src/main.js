@@ -5,7 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TEXT } from './content.js';
 import { appMarkup, esc } from './markup.js';
 import { typeBsl } from './bsl.js';
-import { chapterSupported, initServicesChapter } from './chapter.js';
+import { chapterSupported, initChapters } from './chapter.js';
 import { initOrder, docNumber } from './order.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -20,9 +20,9 @@ const KEY_COUNT = 6;
 let lang = pickLang();
 let theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'; // по умолчанию светлая
 let scene = null;
-let world = null;
-let live = null;
-let chapter = null; // глава «Услуги» с закреплённым экраном (компьютер с 3D) // «живой склад»: события в 3D по разделу, который читают // режим «мир»: стенды в 3D (выключен, если 3D нет)
+let world = null; // режим «мир»: стенды в 3D (отклонён, оставлен выключенным)
+let live = null; // «живой склад»: события в 3D по разделу, который читают
+let chapters = null; // главы с закреплённым экраном (компьютер с 3D): услуги, кейсы, этапы
 
 function pickLang() {
   const q = new URLSearchParams(location.search).get('lang');
@@ -78,7 +78,7 @@ function render() {
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') window.__setMenu(false); });
   }
 
-  chapter = chapterSupported({ scene, reduced }) ? initServicesChapter(t) : null;
+  chapters = chapterSupported({ scene, reduced }) ? initChapters(t, () => live) : null;
   initCases(t);
   initMagnet();
   typeBsl(document.getElementById('bsl'), lang, reduced);
@@ -304,12 +304,9 @@ function onScroll() {
   const frac = Math.min(1, Math.max(0, (mid - tops[i]) / span));
   let f = Math.min(1, Math.max(0, (frac - 0.45) / 0.55));
   let dolly = 0;
-  // глава «Услуги»: шаги держат кадр, камера едет вдоль стеллажа; перелёт — в конце главы
-  const ch = chapter && SECTIONS[i] === 'services' ? chapter.state(scrollY) : null;
-  if (ch) {
-    f = ch.flight;
-    live?.focusSlot(ch.also ? 6 : ch.step);
-  }
+  // главы (услуги, кейсы, этапы): шаги держат кадр, камера медленно наезжает; перелёт — в конце главы
+  const ch = chapters?.[SECTIONS[i]]?.state(scrollY);
+  if (ch) f = ch.flight;
   const eased = f * f * (3 - 2 * f);
   if (ch) dolly = ch.dolly * (1 - eased) ** 2; // наезд уходит быстрее, чем камера улетает, — без отката назад в конце перелёта
   const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 4;

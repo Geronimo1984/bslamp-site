@@ -150,7 +150,7 @@ export function initLive(scene3d, { lang, reduced }) {
     }
   });
   ship.redraw(0);
-  const shipBoard = plate(ship.tex, 3.2, 0.8);
+  const shipBoard = plate(ship.tex, 2.2, 0.55);
   hang(shipBoard, [-3.37, 2.9, -20.67], 3); // ближе к кадру этапов, справа от текста
   let shipN = 0;
   let shipTimer = null;
@@ -176,9 +176,9 @@ export function initLive(scene3d, { lang, reduced }) {
     g.fillText(ru ? '1С · ОНЛАЙН' : '1C · ONLINE', 136, h / 2);
   });
   status.redraw();
-  const statusBoard = plate(status.tex, 2.4, 0.52);
+  const statusBoard = plate(status.tex, 1.7, 0.37);
   const dotMat = new THREE.MeshBasicMaterial({ color: 0xffd400, transparent: true, toneMapped: false });
-  const dot = new THREE.Mesh(new THREE.CircleGeometry(0.065, 20), dotMat);
+  const dot = new THREE.Mesh(new THREE.CircleGeometry(0.045, 20), dotMat);
   const sw = statusBoard.geometry.parameters.width;
   dot.position.set(-sw / 2 + (78 / 1024) * sw, 0, 0.005); // точка — на месте кружка в текстуре
   statusBoard.add(dot);
@@ -196,7 +196,7 @@ export function initLive(scene3d, { lang, reduced }) {
     g.fillText(posted ? (ru ? 'ЗАЯВКА ПРОВЕДЕНА ✓' : 'REQUEST POSTED ✓') : (ru ? 'ЗАЯВКА · ЧЕРНОВИК' : 'REQUEST · DRAFT'), w / 2, h / 2);
   });
   orderB.redraw(false);
-  const orderBoard = plate(orderB.tex, 2.6, 0.65);
+  const orderBoard = plate(orderB.tex, 2.0, 0.5);
   hang(orderBoard, [2.33, 4.85, -8.23], 5); // над стеллажом (верх 4,4 м), в 1,7 м от пути камеры
   let flashAt = -1;
   document.addEventListener('order:posted', () => { orderB.redraw(true); flashAt = performance.now(); });
@@ -234,7 +234,7 @@ export function initLive(scene3d, { lang, reduced }) {
     const now = performance.now();
     for (const s of slots) {
       s.hot = Math.max(0, s.hot - 0.03);
-      s.zoom = (s.zoom ?? 1) + ((s.focus ? 1.2 : 1) - (s.zoom ?? 1)) * 0.12;
+      s.zoom = (s.zoom ?? 1) + ((s.focus ? 1.1 : 1) - (s.zoom ?? 1)) * 0.12;
       s.m.scale.setScalar(s.zoom + s.hot * 0.25);
     }
     if (scanAt > 0) {
@@ -268,12 +268,15 @@ export function initLive(scene3d, { lang, reduced }) {
       scanTimer = setInterval(scan, 3200);
     }
     if (id === 'p-truck') shipTo(0);
-    if (id === 'process' || id === 'p-server') shipTo(6);
+    if ((id === 'process' && !shipManual) || id === 'p-server') shipTo(6);
   }
   // переключение кейса — новое сканирование
   document.addEventListener('click', (e) => {
     if (e.target.closest?.('.journal-row, .case-view button')) scan();
   });
 
-  return { setSection, focusSlot };
+  // глава «Этапы» сама ведёт табло: n — сколько этапов пройдено
+  let shipManual = false;
+  function setShip(n) { shipManual = true; shipTo(n); }
+  return { setSection, focusSlot, scan, setShip };
 }
