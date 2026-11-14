@@ -216,13 +216,13 @@ export function initLive(scene3d, { lang, reduced }) {
     g.fillText(ru ? '1С · ОНЛАЙН' : '1C · ONLINE', 136, h / 2);
   });
   status.redraw();
-  const statusBoard = plate(status.tex, 1.7, 0.37);
+  const statusBoard = plate(status.tex, 1.3, 0.28);
   const dotMat = new THREE.MeshBasicMaterial({ color: 0xffd400, transparent: true, toneMapped: false });
   const dot = new THREE.Mesh(new THREE.CircleGeometry(0.045, 20), dotMat);
   const sw = statusBoard.geometry.parameters.width;
   dot.position.set(-sw / 2 + (78 / 1024) * sw, 0, 0.005); // точка — на месте кружка в текстуре
   statusBoard.add(dot);
-  frameBoard({ mesh: statusBoard, station: 4, x: 0.5, y: 0.5, dist: 4.8 }); // над стойками серверной в кадре «О нас»
+  frameBoard({ mesh: statusBoard, station: 4, x: 0.5, y: 0.5, dist: 3.4 }); // перед стойками (до них ~5,5 м), в кадре «О нас»
 
   // ---------- 5. табло заявки (заявка) ----------
   const orderB = board(1024, 256, (g, w, h, posted) => {
