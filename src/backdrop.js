@@ -302,7 +302,7 @@ export function addBackdrop(scene, { mobile }) {
   }
 
   // дальние ряды: упрощённые стеллажи-блоки у стен, уходят в дымку
-  const farFrame = new THREE.MeshStandardMaterial({ color: 0xd8a800, roughness: 0.6 });
+  const farFrame = new THREE.MeshStandardMaterial({ color: 0x45474c, roughness: 0.6 }); // графит, как ближние стойки
   const farBox = new THREE.MeshStandardMaterial({ color: 0xb48a58, roughness: 0.9 });
   const farUp = new THREE.InstancedMesh(new THREE.BoxGeometry(0.08, 4.4, 0.08), farFrame, 120);
   const farBoxes = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), farBox, mobile ? 120 : 240);

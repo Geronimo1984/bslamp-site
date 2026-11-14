@@ -17,7 +17,7 @@ const BG = 0xe9e3d6; // дневной склад: тёплая светлая �
 // Две темы склада: день (светлая тема сайта) и вечер (тёмная). Ссылки на свет и материалы — в LOOK.
 const THEMES = {
   light: { bg: 0xe9e3d6, fog: 0.021, exposure: 1.0, hemi: [0xfffaf0, 0xb8ad98, 1.3], key: 1.9, fill: 0.5, points: 1, strip: 0xffffff,
-    floor: 0xcfc8ba, wall: 0xe2dccf, grid: [0xb3aa96, 0xbfb7a5], dock: 0xbdb5a5, deck: 0x8d8a83, bloom: 0.18, particles: [0x2f2a22, 0.7] },
+    floor: 0xbcb8b0, wall: 0xdedad2, grid: [0xa6a299, 0xb0aca3], dock: 0xbdb5a5, deck: 0x8d8a83, bloom: 0.18, particles: [0x2f2a22, 0.7] },
   dark: { bg: 0x1d1c1f, fog: 0.032, exposure: 1.05, hemi: [0xfff2cc, 0x2a2a30, 0.7], key: 0.7, fill: 0.15, points: 2.6, strip: 0xfff3c4,
     floor: 0x2c2b2f, wall: 0x232327, grid: [0x4a4536, 0x36332a], dock: 0x3a3a40, deck: 0x3a3a40, bloom: 0.5, particles: [0xffd400, 0.5] },
 };
@@ -307,8 +307,9 @@ function addFloor(scene) {
 // ---------- стеллажи с коробками ----------
 
 function addShelves(scene, mobile) {
-  const uprightMat = new THREE.MeshStandardMaterial({ color: YELLOW, roughness: 0.5, metalness: 0.3 });
-  const beamMat = new THREE.MeshStandardMaterial({ color: RED, roughness: 0.5, metalness: 0.3 });
+  // стойки — графит, балки — приглушённая терракота: жёлтый в кадре остаётся только у того, на что надо смотреть
+  const uprightMat = new THREE.MeshStandardMaterial({ color: 0x3d4046, roughness: 0.45, metalness: 0.5 });
+  const beamMat = new THREE.MeshStandardMaterial({ color: 0xc0623f, roughness: 0.55, metalness: 0.3 });
   const deckMat = new THREE.MeshStandardMaterial({ color: 0x8d8a83, roughness: 0.8 }); // сетчатый настил стеллажа
   LOOK.deck = deckMat;
 
@@ -381,6 +382,30 @@ function addShelves(scene, mobile) {
   }
   boxes.count = n;
   scene.add(boxes);
+
+  // мягкие «контактные» тени на полу вдоль рядов — дешёвая замена настоящим теням, даёт стеллажам вес
+  const shadowTex = (() => {
+    const c = document.createElement('canvas');
+    c.width = 64;
+    c.height = 8;
+    const g = c.getContext('2d');
+    const grad = g.createLinearGradient(0, 0, 64, 0);
+    grad.addColorStop(0, 'rgba(0,0,0,0)');
+    grad.addColorStop(0.25, 'rgba(0,0,0,0.85)');
+    grad.addColorStop(0.75, 'rgba(0,0,0,0.85)');
+    grad.addColorStop(1, 'rgba(0,0,0,0)');
+    g.fillStyle = grad;
+    g.fillRect(0, 0, 64, 8);
+    return new THREE.CanvasTexture(c);
+  })();
+  const shadowMat = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, opacity: 0.28, depthWrite: false, color: 0x2a2620 });
+  LOOK.contactShadow = shadowMat;
+  for (const x of [-3.2, 3.2, -7.6, 7.6]) {
+    const sh = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 18.6), shadowMat);
+    sh.rotation.x = -Math.PI / 2;
+    sh.position.set(x, 0.012, 4 - 18 / 2 - 0.6);
+    scene.add(sh);
+  }
   return { boxes };
 }
 

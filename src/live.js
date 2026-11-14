@@ -7,7 +7,8 @@
 //   заявка  — табло «Заявка · черновик», после «Провести» — «проведена ✓» и вспышка света.
 const YELLOW = '#ffd400';
 const INK = '#1f1d19';
-const GREEN = '#2fbf71';
+// «готово» — жёлтый на графите (два акцента сайта: жёлтый — действие и готово, красный — тонкие линии)
+const DONE = YELLOW;
 const FONT = 'Unbounded, Arial Black, sans-serif';
 const MONO = '"JetBrains Mono", Menlo, monospace';
 
@@ -99,9 +100,9 @@ export function initLive(scene3d, { lang, reduced }) {
   // ---------- 2. сканирование коробки ТСД (кейсы) ----------
   const tick = board(512, 160, (g, w, h) => {
     roundRect(g, 6, 6, w - 12, h - 12, 40);
-    g.fillStyle = GREEN;
+    g.fillStyle = INK;
     g.fill();
-    g.fillStyle = '#fff';
+    g.fillStyle = YELLOW;
     g.font = `700 ${h * 0.4}px ${FONT}`;
     g.textAlign = 'center';
     g.textBaseline = 'middle';
@@ -125,7 +126,7 @@ export function initLive(scene3d, { lang, reduced }) {
     g.fillStyle = '#1f1d19';
     g.fill();
     const done = n >= 6;
-    g.fillStyle = done ? GREEN : YELLOW;
+    g.fillStyle = done ? DONE : '#f3efe6';
     g.font = `700 ${h * 0.24}px ${MONO}`;
     g.textBaseline = 'middle';
     g.fillText(done ? (ru ? 'ОТГРУЖЕНО ✓' : 'SHIPPED ✓') : (ru ? 'ОТГРУЗКА' : 'SHIPPING'), 48, h * 0.32);
@@ -134,7 +135,7 @@ export function initLive(scene3d, { lang, reduced }) {
     g.fillText(`${n} / 6`, w - 48, h * 0.32);
     // шесть сегментов — шесть этапов
     for (let k = 0; k < 6; k++) {
-      g.fillStyle = k < n ? (done ? GREEN : YELLOW) : '#3a3833';
+      g.fillStyle = k < n ? YELLOW : '#3a3833';
       g.fillRect(48 + k * ((w - 96) / 6), h * 0.62, (w - 96) / 6 - 14, h * 0.18);
     }
   });
@@ -157,7 +158,7 @@ export function initLive(scene3d, { lang, reduced }) {
   // текстура рисуется один раз; пульсирует отдельный кружок (без перерисовки холста каждый кадр)
   const status = board(1024, 220, (g, w, h) => {
     roundRect(g, 0, 0, w, h, 26);
-    g.fillStyle = 'rgba(31,29,25,0.92)';
+    g.fillStyle = INK;
     g.fill();
     g.fillStyle = '#f3efe6';
     g.font = `700 ${h * 0.3}px ${MONO}`;
@@ -166,7 +167,7 @@ export function initLive(scene3d, { lang, reduced }) {
   });
   status.redraw();
   const statusBoard = plate(status.tex, 2.0, 0.43);
-  const dotMat = new THREE.MeshBasicMaterial({ color: 0x2fbf71, transparent: true, toneMapped: false });
+  const dotMat = new THREE.MeshBasicMaterial({ color: 0xffd400, transparent: true, toneMapped: false });
   const dot = new THREE.Mesh(new THREE.CircleGeometry(0.05, 20), dotMat);
   dot.position.set(-1.0 + (78 / 1024) * 2.0, 0, 0.005);
   statusBoard.add(dot);
@@ -175,9 +176,9 @@ export function initLive(scene3d, { lang, reduced }) {
   // ---------- 5. табло заявки (заявка) ----------
   const orderB = board(1024, 256, (g, w, h, posted) => {
     roundRect(g, 0, 0, w, h, 26);
-    g.fillStyle = posted ? GREEN : '#1f1d19';
+    g.fillStyle = posted ? YELLOW : INK;
     g.fill();
-    g.fillStyle = posted ? '#fff' : YELLOW;
+    g.fillStyle = posted ? INK : YELLOW;
     g.font = `700 ${h * 0.26}px ${MONO}`;
     g.textAlign = 'center';
     g.textBaseline = 'middle';
