@@ -171,7 +171,8 @@ section[id] { scroll-margin-top: 64px; }
 .wordmark {
   pointer-events: none;
   flex-basis: 100%; order: -1; margin: 10px 0 18px; text-align: center; white-space: nowrap;
-  font: 600 clamp(64px, 19vw, 300px)/0.82 var(--f-head); letter-spacing: -0.06em;
+  font: 600 clamp(44px, 12.5vw, 196px)/0.86 var(--f-head); letter-spacing: -0.05em; /* по ширине контента: Unbounded широкий */
+  min-width: 0; overflow: hidden;
   color: transparent; -webkit-text-stroke: 1.5px var(--line); background: linear-gradient(180deg, var(--ink) 0%, transparent 85%);
   -webkit-background-clip: text; background-clip: text; opacity: 0.16; user-select: none;
 }
