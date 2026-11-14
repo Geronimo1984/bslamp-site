@@ -67,7 +67,8 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; overflow-x: clip; }
+html.menu-open { overflow: hidden; } /* открыто меню — страница под ним стоит */
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 body {
   margin: 0;
@@ -156,19 +157,19 @@ section[id] { scroll-margin-top: 64px; }
 
 /* ---------- плёночное зерно поверх всего сайта ---------- */
 .grain {
-  position: fixed; inset: -50%; z-index: 60; pointer-events: none; opacity: 0.07; mix-blend-mode: multiply;
+  position: fixed; inset: 0; z-index: 60; pointer-events: none; opacity: 0.07; mix-blend-mode: multiply;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  animation: grain 0.9s steps(4) infinite;
+  animation: grain 0.9s steps(4) infinite; /* двигается узор, а не слой — слой не вылезает за экран */
 }
 :root[data-theme="dark"] .grain { mix-blend-mode: screen; opacity: 0.06; filter: invert(1); }
-@keyframes grain {
-  0% { transform: translate(0, 0); } 25% { transform: translate(-3%, 2%); } 50% { transform: translate(2%, -3%); } 75% { transform: translate(-2%, -1%); } 100% { transform: translate(0, 0); }
-}
+@keyframes grain { 0% { background-position: 0 0; } 25% { background-position: -37px 23px; } 50% { background-position: 29px -41px; } 75% { background-position: -19px -13px; } 100% { background-position: 0 0; } }
 @media (prefers-reduced-motion: reduce) { .grain { animation: none; } }
 
 /* ---------- финал: огромный вопрос и вордмарк в подвале ---------- */
 .final-title { font: 500 clamp(44px, 8.4vw, 132px)/0.98 var(--f-head); letter-spacing: -0.035em; }
+/* надпись — фон, клики проходят сквозь неё к ссылкам подвала */
 .wordmark {
+  pointer-events: none;
   flex-basis: 100%; order: -1; margin: 10px 0 18px; text-align: center; white-space: nowrap;
   font: 600 clamp(64px, 19vw, 300px)/0.82 var(--f-head); letter-spacing: -0.06em;
   color: transparent; -webkit-text-stroke: 1.5px var(--line); background: linear-gradient(180deg, var(--ink) 0%, transparent 85%);
@@ -188,10 +189,71 @@ section[id] { scroll-margin-top: 64px; }
 }
 #cursor.labeled .cur-label { opacity: 1; transform: scale(1); }
 
+/* ---------- мобильное меню: на весь экран, крупные пункты ---------- */
+.menu-btn {
+  position: relative; width: 42px; height: 42px; border-radius: 50%; padding: 0;
+  background: var(--paper); border: 1px solid var(--line); cursor: pointer;
+}
+.menu-btn span { position: absolute; left: 12px; right: 12px; height: 2px; border-radius: 2px; background: var(--ink); transition: transform 0.3s, opacity 0.2s, top 0.3s; }
+.menu-btn span:nth-child(1) { top: 14px; }
+.menu-btn span:nth-child(2) { top: 20px; }
+.menu-btn span:nth-child(3) { top: 26px; }
+.menu-btn[aria-expanded="true"] span:nth-child(1) { top: 20px; transform: rotate(45deg); }
+.menu-btn[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.menu-btn[aria-expanded="true"] span:nth-child(3) { top: 20px; transform: rotate(-45deg); }
+.nav-mobile {
+  display: flex; flex-direction: column; position: fixed; inset: 0; z-index: 9;
+  padding: 86px 20px max(24px, env(safe-area-inset-bottom)); background: var(--bg);
+  opacity: 0; visibility: hidden; transform: translateY(-12px); transition: opacity 0.3s, transform 0.3s, visibility 0s 0.3s;
+  overflow-y: auto;
+}
+.nav-mobile.open { opacity: 1; visibility: visible; transform: none; transition: opacity 0.3s, transform 0.3s; }
+.nm-links { display: grid; }
+.nm-links a {
+  display: grid; grid-template-columns: 44px 1fr auto; align-items: baseline; padding: 18px 2px; text-decoration: none;
+  border-bottom: 1px solid var(--line); opacity: 0; transform: translateY(10px); transition: opacity 0.35s, transform 0.35s;
+}
+.nav-mobile.open .nm-links a { opacity: 1; transform: none; }
+.nav-mobile.open .nm-links a:nth-child(2) { transition-delay: 0.05s; }
+.nav-mobile.open .nm-links a:nth-child(3) { transition-delay: 0.1s; }
+.nav-mobile.open .nm-links a:nth-child(4) { transition-delay: 0.15s; }
+.nm-num { font: 500 13px var(--f-mono); color: var(--red); }
+.nm-label { font: 500 28px/1.1 var(--f-head); letter-spacing: -0.02em; }
+.nm-arrow { font-size: 22px; color: var(--dim); }
+.nm-cta { margin-top: 28px; width: 100%; padding: 16px; font-size: 16px; }
+.nm-foot { margin-top: auto; padding-top: 24px; display: grid; gap: 16px; }
+.nm-contacts { display: grid; gap: 4px; }
+.nm-contacts a { display: flex; align-items: center; gap: 10px; padding: 8px 0; text-decoration: none; color: var(--muted); font-size: 15px; }
+.nm-contacts svg { width: 18px; height: 18px; color: var(--red); }
+.nm-toggles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.nm-toggle {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 999px;
+  background: var(--paper); color: var(--ink); border: 1px solid var(--line); font: 500 14px var(--f-body); cursor: pointer;
+}
+.nm-toggle svg { width: 16px; height: 16px; }
+.nm-toggle .moon { display: none; }
+:root[data-theme="dark"] .nm-toggle .sun { display: none; }
+:root[data-theme="dark"] .nm-toggle .moon { display: block; }
+@media (min-width: 1021px) { .menu-btn, .nav-mobile { display: none !important; } }
+@media (max-width: 1020px) { .menu-btn { display: inline-block; } }
+
+/* ---------- телефон: лёгкая отрисовка и без увеличения страницы ---------- */
+@media (max-width: 760px), (pointer: coarse) {
+  /* поля 16px: iPhone при меньшем шрифте сам увеличивает страницу и не возвращает масштаб */
+  .field input, .field select, .field textarea { font-size: 16px !important; }
+  /* размытие фона и зерно поверх 3D дорого стоят на телефоне — заменены плотным фоном */
+  .top, .glass, .rate, .about, .contacts, .svc-list { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .top { background: var(--bg); }
+  .grain { display: none; }
+  :root { --halo: 0 0 10px rgba(243, 239, 230, 0.95); }
+  :root[data-theme="dark"] { --halo: 0 0 10px rgba(27, 27, 30, 0.95); }
+}
+@media (max-width: 760px) {
+  .top-actions .theme-btn, .top-actions .lang { display: none; } /* тема и язык — в меню */
+}
+
 /* плавная смена темы */
 body, .top, .svc-list, .about, .contacts, .rate, .also, .stat, .founder, .foot { transition: background-color 0.4s, color 0.4s, border-color 0.4s; }
-.menu-btn { display: none; }
-.nav-mobile { display: none; }
 
 /* ---------- кнопки ---------- */
 .btn {
@@ -431,7 +493,7 @@ h2 { font: 500 clamp(32px, 4.2vw, 54px)/1.08 var(--f-head); letter-spacing: -0.0
   padding: 26px var(--pad-x) 36px; color: var(--muted); font-size: 13px; position: relative; z-index: 2;
   background: var(--bg); border-top: 1px solid var(--line);
 }
-.foot a { color: var(--muted); text-decoration: none; }
+.foot a { color: var(--muted); text-decoration: none; position: relative; z-index: 1; }
 .credits-link { color: inherit !important; text-decoration: none !important; cursor: text; } /* выглядит как обычный текст подвала, но по клику раскрывает авторов */
 .credits { flex-basis: 100%; margin: 0; font-size: 11px; color: var(--dim); line-height: 1.5; }
 
@@ -467,18 +529,6 @@ h2 { font: 500 clamp(32px, 4.2vw, 54px)/1.08 var(--f-head); letter-spacing: -0.0
   .nav { display: none; }
   .brand-tag { display: none; }
   .top-actions { margin-left: auto; }
-  .menu-btn {
-    display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
-    background: transparent; color: var(--ink); border: 1px solid var(--line); cursor: pointer;
-  }
-  .menu-btn svg { width: 18px; height: 18px; }
-  .nav-mobile.open {
-    display: grid; position: fixed; top: 63px; left: 0; right: 0; z-index: 9; padding: 8px var(--gutter) 16px;
-    background: var(--menu-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--line);
-  }
-  .nav-mobile a { padding: 14px 4px; font-size: 18px; text-decoration: none; border-bottom: 1px solid var(--line); }
-  .nav-mobile a:last-child { border-bottom: 0; }
 }
 @media (max-width: 760px) {
   .nav { display: none; }
@@ -489,18 +539,6 @@ h2 { font: 500 clamp(32px, 4.2vw, 54px)/1.08 var(--f-head); letter-spacing: -0.0
   .brand { gap: 6px; }
   .brand-name { font-size: 16px; }
   .brand-tag { display: none; }
-  .menu-btn {
-    display: inline-grid; place-items: center; width: 38px; height: 38px; border-radius: 50%;
-    background: transparent; color: var(--ink); border: 1px solid var(--line); cursor: pointer;
-  }
-  .menu-btn svg { width: 18px; height: 18px; }
-  .nav-mobile.open {
-    display: grid; position: fixed; top: 63px; left: 0; right: 0; z-index: 9; padding: 8px var(--gutter) 16px;
-    background: var(--menu-bg); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-    border-bottom: 1px solid var(--line);
-  }
-  .nav-mobile a { padding: 14px 4px; font-size: 18px; text-decoration: none; border-bottom: 1px solid var(--line); }
-  .nav-mobile a:last-child { border-bottom: 0; }
   .scene-shade { background: var(--shade-mobile); }
   .sec { padding-top: 72px; padding-bottom: 72px; }
   .hero { min-height: 100svh; padding-top: 96px; gap: 24px; }

@@ -28,7 +28,7 @@ export function taxiWindow(title, body, { cls = '', commands = '' } = {}) {
   return `
   <div class="win ${cls}">
     <div class="win-title">
-      <span class="win-nav" aria-hidden="true"><i>‹</i><i>›</i><i class="star">☆</i></span>
+      <span class="win-nav" aria-hidden="true"><i class="star">☆</i></span>
       <span class="win-title-text">${title}</span>
       <span class="win-ctl" aria-hidden="true"><i>⋮</i><i>▢</i><i>×</i></span>
     </div>
@@ -72,12 +72,28 @@ export function appMarkup(t, lang, { number, today }) {
       <button class="lang" type="button" data-lang>${t.lang}</button>
       <a class="btn btn-y btn-sm" href="#order">${t.nav.order}</a>
       <button class="menu-btn" type="button" aria-label="${lang === 'ru' ? 'Меню' : 'Menu'}" aria-expanded="false" aria-controls="nav-mobile">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        <span></span><span></span><span></span>
       </button>
     </div>
   </header>
-  <nav class="nav-mobile" id="nav-mobile">
-    ${NAV.map((s) => `<a href="#${s}">${t.nav[s]}</a>`).join('')}
+  <nav class="nav-mobile" id="nav-mobile" aria-label="${lang === 'ru' ? 'Меню' : 'Menu'}">
+    <div class="nm-links">
+      ${NAV.map((s, i) => `<a href="#${s}"><span class="nm-num">0${i + 1}</span><span class="nm-label">${t.nav[s]}</span><span class="nm-arrow" aria-hidden="true">→</span></a>`).join('')}
+    </div>
+    <a class="btn btn-y nm-cta" href="#order">${t.hero.cta}</a>
+    <div class="nm-foot">
+      <div class="nm-contacts">
+        ${contactLinks().filter((c) => c.icon === 'tg' || c.icon === 'phone').map((c) => `<a href="${c.href}">${icon(c.icon)}<span>${c.label.replace('Telegram ', '')}</span></a>`).join('')}
+      </div>
+      <div class="nm-toggles">
+        <button type="button" class="nm-toggle" data-theme-toggle>
+          <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+          <span>${lang === 'ru' ? 'Тема' : 'Theme'}</span>
+        </button>
+        <button type="button" class="nm-toggle" data-lang>${t.lang === 'EN' ? 'English' : 'Русский'}</button>
+      </div>
+    </div>
   </nav>
 
   <main>

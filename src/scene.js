@@ -36,7 +36,7 @@ const STATIONS = [ // кадры выставлены в редакторе 14.1
 
 export function createScene(canvas, { mobile }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: !mobile, powerPreference: 'high-performance' });
-  let pixelRatio = Math.min(window.devicePixelRatio, mobile ? 1.25 : 1.5);
+  let pixelRatio = Math.min(window.devicePixelRatio, mobile ? 1 : 1.5); // телефон: чёткость 1× — главный выигрыш в скорости
   renderer.setPixelRatio(pixelRatio);
   renderer.setClearColor(BG, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -64,7 +64,10 @@ export function createScene(canvas, { mobile }) {
   const truck = addTruck(scene);
   const servers = addServerRoom(scene);
   // Детальные модели подгружаются после первого кадра и заменяют простые фигуры
-  loadModels(scene, { boxes: shelves.boxes, tsd, tsdRotY: Math.PI, truck: truck.group, racks: servers.racks, leds: servers.leds });
+  // модели — после первых кадров, чтобы вход на сайт не подтормаживал (распаковка моделей занимает процессор)
+  const startModels = () => loadModels(scene, { boxes: shelves.boxes, tsd, tsdRotY: Math.PI, truck: truck.group, racks: servers.racks, leds: servers.leds });
+  if ('requestIdleCallback' in window) requestIdleCallback(startModels, { timeout: 1500 });
+  else setTimeout(startModels, 800);
   const barcodes = addBarcodeParticles(scene, mobile ? 90 : 260);
   const backdrop = addBackdrop(scene, { mobile }); // окна, фермы, доки, надписи, колонны, мелочи
 
@@ -77,7 +80,7 @@ export function createScene(canvas, { mobile }) {
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.18, 0.4, 0.97) // днём свечение едва заметно;
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
-  let useBloom = true;
+  let useBloom = !mobile; // свечение на телефоне выключено: днём его почти не видно, а стоит дорого
 
   let target = 0;
   let current = 0;

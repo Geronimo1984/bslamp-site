@@ -37,16 +37,17 @@ function render() {
   const app = document.getElementById('app');
   app.innerHTML = appMarkup(t, lang, { number, today });
 
-  document.querySelector('[data-lang]').addEventListener('click', () => {
+  document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => {
     lang = lang === 'ru' ? 'en' : 'ru';
     try { localStorage.setItem('lang', lang); } catch { /* приватный режим */ }
     ScrollTrigger.getAll().forEach((st) => st.kill());
     const y = scrollY;
+    document.documentElement.classList.remove('menu-open');
     render();
     scrollTo(0, y);
-  });
+  }));
 
-  document.querySelector('[data-theme-toggle]').addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark', true));
+  document.querySelectorAll('[data-theme-toggle]').forEach((b) => b.addEventListener('click', () => applyTheme(theme === 'dark' ? 'light' : 'dark', true)));
 
   // ссылка «3D-модели» в подвале раскрывает список авторов (лицензия CC BY)
   const creditsLink = document.querySelector('.credits-link');
@@ -59,15 +60,19 @@ function render() {
 
   const menuBtn = document.querySelector('.menu-btn');
   const menu = document.getElementById('nav-mobile');
+  // мобильное меню на весь экран; пока открыто — страница под ним не прокручивается
   const setMenu = (open) => {
     menu.classList.toggle('open', open);
+    document.documentElement.classList.toggle('menu-open', open);
     menuBtn.setAttribute('aria-expanded', String(open));
   };
+  window.__setMenu = setMenu;
   menuBtn.addEventListener('click', () => setMenu(!menu.classList.contains('open')));
   menu.addEventListener('click', (e) => { if (e.target.closest('a')) setMenu(false); });
-  // закрыть меню по Esc и по клику мимо
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setMenu(false); });
-  document.addEventListener('click', (e) => { if (!e.target.closest('#nav-mobile, .menu-btn')) setMenu(false); });
+  if (!render.bound) {
+    render.bound = true;
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') window.__setMenu(false); });
+  }
 
   initCases(t);
   initMagnet();
