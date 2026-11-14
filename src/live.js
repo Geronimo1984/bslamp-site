@@ -89,6 +89,13 @@ export function initLive(scene3d, { lang, reduced }) {
     slotTimers.forEach(clearTimeout);
     slotTimers = slots.map((_, i) => setTimeout(() => setSlot(i, on), reduced ? 0 : (on ? 140 + i * 170 : 0)));
   }
+  // глава «Услуги»: горят таблички до текущей, текущая крупнее (k = 6 — все горят, «также делаем»)
+  let chapterMode = false;
+  function focusSlot(k) {
+    chapterMode = true;
+    slotTimers.forEach(clearTimeout);
+    slots.forEach((sl, i) => { setSlot(i, i <= k); sl.focus = i === k; });
+  }
   // наведение на услугу — её табличка «подпрыгивает»
   document.addEventListener('pointerover', (e) => {
     const li = e.target.closest?.('.svc-list .svc');
@@ -222,9 +229,9 @@ export function initLive(scene3d, { lang, reduced }) {
   scene3d.onFrame((t) => {
     const now = performance.now();
     for (const s of slots) {
-      if (!s.hot) continue;
       s.hot = Math.max(0, s.hot - 0.03);
-      s.m.scale.setScalar(1 + s.hot * 0.25);
+      s.zoom = (s.zoom ?? 1) + ((s.focus ? 1.2 : 1) - (s.zoom ?? 1)) * 0.12;
+      s.m.scale.setScalar(s.zoom + s.hot * 0.25);
     }
     if (scanAt > 0) {
       const p = (now - scanAt) / 1400;
@@ -249,7 +256,8 @@ export function initLive(scene3d, { lang, reduced }) {
   function setSection(id) {
     if (id === active) return;
     active = id;
-    slotsOn(id === 'p-forklift' || id === 'services');
+    if (!chapterMode || id !== 'services') slotsOn(id === 'p-forklift' || id === 'services');
+    if (id !== 'services') slots.forEach((sl) => { sl.focus = false; });
     clearInterval(scanTimer);
     if (id === 'p-tsd' || id === 'cases') {
       scan();
@@ -263,5 +271,5 @@ export function initLive(scene3d, { lang, reduced }) {
     if (e.target.closest?.('.journal-row, .case-view button')) scan();
   });
 
-  return { setSection };
+  return { setSection, focusSlot };
 }

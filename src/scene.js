@@ -147,7 +147,12 @@ export function createScene(canvas, { mobile }) {
     posCurve.getPoint(pt, camPos);
     lookCurve.getPoint(pt, camLook);
     dolly += (dollyTarget - dolly) * 0.06;
-    if (Math.abs(dolly) > 0.001) camPos.add(dollyDir.subVectors(camLook, camPos).normalize().multiplyScalar(dolly));
+    // наезд сдвигает и камеру, и точку взгляда — иначе, проехав точку взгляда, камера развернулась бы назад
+    if (Math.abs(dolly) > 0.001) {
+      dollyDir.subVectors(camLook, camPos).normalize().multiplyScalar(dolly);
+      camPos.add(dollyDir);
+      camLook.add(dollyDir);
+    }
     camPos.x += mouse.x * 0.6;
     camPos.y -= mouse.y * 0.35;
     camera.position.copy(camPos);

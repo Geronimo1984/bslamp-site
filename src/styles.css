@@ -79,7 +79,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font: 400 16px/1.6 var(--f-body);
-  overflow-x: hidden;
+  overflow-x: clip; /* clip, а не hidden: hidden делает body контейнером прокрутки и ломает закреплённые главы (sticky) */
 }
 a { color: inherit; }
 h1, h2, h3, h4 { margin: 0; font-weight: 500; }
@@ -726,3 +726,35 @@ body.has3d .sec .kicker, body.has3d .hero-text .kicker, body.has3d .also-title {
 
 /* единая система карточек: одна тень у всех карточек на сцене */
 .rate, .also, .stat, .founder { box-shadow: var(--sh-card); }
+
+/* ---------- глава «Услуги»: закреплённый экран, прокрутка ведёт по шагам ---------- */
+#services.chapter-on { height: 820vh; padding: 0; max-width: none; margin: 0; }
+#services.chapter-on > :not(.ch-stick) { display: none; }
+#services.chapter-on > .ch-stick { max-width: none; }
+.ch-stick { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; padding: 96px var(--pad-x) 48px; box-sizing: border-box; }
+.ch-col { width: var(--col, 600px); display: flex; flex-direction: column; gap: 28px; transition: opacity 0.2s linear; }
+.ch-steps { display: grid; }
+/* шаги лежат друг на друге: текущий выезжает снизу, прошлые уходят вверх */
+.ch-step { grid-area: 1 / 1; opacity: 0; transform: translateY(36px); transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); pointer-events: none; }
+.ch-step.past { transform: translateY(-36px); }
+.ch-step.on { opacity: 1; transform: none; pointer-events: auto; }
+.ch-num { display: flex; align-items: baseline; gap: 10px; margin-bottom: 18px; font-family: var(--f-mono); text-shadow: var(--halo); }
+.ch-num b { font: 600 clamp(56px, 6vw, 88px)/0.9 var(--f-head); letter-spacing: -0.03em; color: var(--ink); }
+.ch-num b::after { content: ''; display: block; width: 0.9em; height: 6px; margin-top: 10px; border-radius: 3px; background: var(--yellow); }
+.ch-num span { font-size: 16px; color: var(--dim); }
+.ch-title { font: 500 clamp(34px, 3.6vw, 52px)/1.08 var(--f-head); letter-spacing: -0.02em; margin-bottom: 18px; text-shadow: var(--halo); }
+.ch-text { font-size: clamp(18px, 1.5vw, 21px); line-height: 1.5; color: var(--muted); max-width: 30em; text-shadow: var(--halo); }
+.ch-also ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.ch-also li { padding: 14px 18px; border-radius: var(--r-m); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--sh-card); }
+.ch-also li b { display: block; font-weight: 600; margin-bottom: 2px; }
+.ch-also li span { color: var(--muted); font-size: 15px; }
+.ch-foot { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.ch-rate { display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-radius: var(--r-m); background: var(--paper); border: 1px solid var(--line); box-shadow: var(--sh-card); }
+.ch-rate strong { font: 600 20px var(--f-head); }
+.ch-rate span { color: var(--muted); font-size: 13px; max-width: 260px; }
+/* шкала шагов: 7 рисок, пройденные — жёлтые */
+.ch-ticks { display: flex; gap: 6px; }
+.ch-ticks i { width: 22px; height: 4px; border-radius: 2px; background: rgba(31, 29, 25, 0.18); transition: background 0.3s; }
+.ch-ticks i.on { background: var(--yellow); }
+:root[data-theme="dark"] .ch-ticks i { background: rgba(255, 255, 255, 0.18); }
+:root[data-theme="dark"] .ch-ticks i.on { background: var(--yellow); }

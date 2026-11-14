@@ -5,6 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { TEXT } from './content.js';
 import { appMarkup, esc } from './markup.js';
 import { typeBsl } from './bsl.js';
+import { chapterSupported, initServicesChapter } from './chapter.js';
 import { initOrder, docNumber } from './order.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -20,7 +21,8 @@ let lang = pickLang();
 let theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'; // по умолчанию светлая
 let scene = null;
 let world = null;
-let live = null; // «живой склад»: события в 3D по разделу, который читают // режим «мир»: стенды в 3D (выключен, если 3D нет)
+let live = null;
+let chapter = null; // глава «Услуги» с закреплённым экраном (компьютер с 3D) // «живой склад»: события в 3D по разделу, который читают // режим «мир»: стенды в 3D (выключен, если 3D нет)
 
 function pickLang() {
   const q = new URLSearchParams(location.search).get('lang');
@@ -76,6 +78,7 @@ function render() {
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') window.__setMenu(false); });
   }
 
+  chapter = chapterSupported({ scene, reduced }) ? initServicesChapter(t) : null;
   initCases(t);
   initMagnet();
   typeBsl(document.getElementById('bsl'), lang, reduced);
@@ -299,16 +302,21 @@ function onScroll() {
   while (i < tops.length - 2 && mid >= tops[i + 1]) i++;
   const span = tops[i + 1] - tops[i] || 1;
   const frac = Math.min(1, Math.max(0, (mid - tops[i]) / span));
-  const f = Math.min(1, Math.max(0, (frac - 0.45) / 0.55));
+  let f = Math.min(1, Math.max(0, (frac - 0.45) / 0.55));
+  let dolly = 0;
+  // глава «Услуги»: шаги держат кадр, камера едет вдоль стеллажа; перелёт — в конце главы
+  const ch = chapter && SECTIONS[i] === 'services' ? chapter.state(scrollY) : null;
+  if (ch) {
+    f = ch.flight;
+    live?.focusSlot(ch.also ? 6 : ch.step);
+  }
   const eased = f * f * (3 - 2 * f);
+  if (ch) dolly = ch.dolly * (1 - eased) ** 2; // наезд уходит быстрее, чем камера улетает, — без отката назад в конце перелёта
   const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 4;
   live?.setSection(atEnd ? SECTIONS[SECTIONS.length - 1] : SECTIONS[mid >= tops[i + 1] ? i + 1 : i]);
   const key = SECTION_KEY[i] + (SECTION_KEY[i + 1] - SECTION_KEY[i]) * eased;
   scene.setProgress(atEnd ? 1 : key / (KEY_COUNT - 1));
-  // проба «живого кадра» (только услуги): пока читают раздел, камера медленно подъезжает на 0,5 м,
-  // с началом перелёта наезд плавно уходит — сами перелёты не меняются
-  const DOLLY_SECTION = 'services';
-  scene.setDolly(SECTIONS[i] === DOLLY_SECTION ? 0.5 * Math.min(1, frac / 0.45) * (1 - eased) : 0);
+  scene.setDolly(dolly);
 }
 let cameraBound = false;
 function bindCamera() {
