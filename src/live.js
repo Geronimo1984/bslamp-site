@@ -36,20 +36,60 @@ export function initLive(scene3d, { lang, reduced }) {
   }
   // табло висит на двух тросах и повёрнуто к кадру своей локации (stations: 0 вход … 5 заявка)
   const cableMat = new THREE.MeshStandardMaterial({ color: 0x2c2b29 });
+  const cableGeo = new THREE.BoxGeometry(0.015, 1, 0.015);
   function hang(mesh, pos, station) {
+    if (!mesh.userData.cables) {
+      const w = mesh.geometry.parameters.width;
+      mesh.userData.cables = [-w * 0.4, w * 0.4].map((dx) => {
+        const c = new THREE.Mesh(cableGeo, cableMat);
+        c.position.x = dx;
+        mesh.add(c);
+        return c;
+      });
+      scene.add(mesh);
+    }
     mesh.position.set(...pos);
     const cam = new THREE.Vector3(...scene3d.keys[station].pos);
     mesh.lookAt(cam.x, pos[1], cam.z); // только поворот вокруг вертикали — табло не заваливается
-    const w = mesh.geometry.parameters.width;
     const h = mesh.geometry.parameters.height;
-    const len = 7.9 - pos[1] - h / 2;
-    for (const dx of [-w * 0.4, w * 0.4]) {
-      const c = new THREE.Mesh(new THREE.BoxGeometry(0.015, len, 0.015), cableMat);
-      c.position.set(dx, h / 2 + len / 2, -0.01);
-      mesh.add(c);
+    const len = Math.max(0.1, 7.9 - pos[1] - h / 2);
+    for (const c of mesh.userData.cables) {
+      c.scale.y = len;
+      c.position.set(c.position.x, h / 2 + len / 2, -0.01);
     }
-    scene.add(mesh);
   }
+
+  // табло в кадре своей локации: точка экрана (ndc −1…1) на расстоянии dist от камеры этого кадра.
+  // Пересчитывается при изменении окна — на узком экране табло сдвигается внутрь и не обрезается краем
+  const frameCam = new THREE.PerspectiveCamera();
+  const tmpV = new THREE.Vector3();
+  const framed = [];
+  function placeInFrame({ mesh, station, x, y, dist }) {
+    const st = scene3d.keys[station];
+    frameCam.fov = st.fov || 50;
+    frameCam.aspect = innerWidth / innerHeight;
+    frameCam.position.set(...st.pos);
+    frameCam.lookAt(...st.look);
+    frameCam.updateProjectionMatrix();
+    frameCam.updateMatrixWorld();
+    const halfW = mesh.geometry.parameters.width / 2;
+    const at = (nx) => tmpV.set(nx, y, 0.5).unproject(frameCam).sub(frameCam.position).normalize().multiplyScalar(dist).add(frameCam.position).clone();
+    // сдвигаем внутрь, пока правый край табло (с запасом на покачивание камеры мышью) не окажется в кадре
+    let nx = x;
+    for (let k = 0; k < 40; k++) {
+      const c = at(nx);
+      const right = c.clone().add(new THREE.Vector3(frameCam.matrixWorld.elements[0], 0, frameCam.matrixWorld.elements[2]).normalize().multiplyScalar(halfW)).project(frameCam);
+      if (right.x <= 0.86 || nx < 0.1) break;
+      nx -= 0.02;
+    }
+    hang(mesh, at(nx).toArray(), station);
+  }
+  function frameBoard(cfg) {
+    framed.push(cfg);
+    placeInFrame(cfg);
+  }
+  scene3d.onResize?.(() => framed.forEach(placeInFrame));
+
   function roundRect(g, x, y, w, h, r) {
     g.beginPath();
     g.roundRect(x, y, w, h, r);
@@ -151,7 +191,7 @@ export function initLive(scene3d, { lang, reduced }) {
   });
   ship.redraw(0);
   const shipBoard = plate(ship.tex, 2.2, 0.55);
-  hang(shipBoard, [-3.37, 2.9, -20.67], 3); // ближе к кадру этапов, справа от текста
+  frameBoard({ mesh: shipBoard, station: 3, x: 0.48, y: 0.5, dist: 5.8 }); // справа вверху кадра этапов
   let shipN = 0;
   let shipTimer = null;
   function shipTo(n) {
@@ -182,7 +222,7 @@ export function initLive(scene3d, { lang, reduced }) {
   const sw = statusBoard.geometry.parameters.width;
   dot.position.set(-sw / 2 + (78 / 1024) * sw, 0, 0.005); // точка — на месте кружка в текстуре
   statusBoard.add(dot);
-  hang(statusBoard, [9.01, 2.6, -30.07], 4); // перед стойками серверной, крупно в кадре «О нас»
+  frameBoard({ mesh: statusBoard, station: 4, x: 0.5, y: 0.5, dist: 4.8 }); // над стойками серверной в кадре «О нас»
 
   // ---------- 5. табло заявки (заявка) ----------
   const orderB = board(1024, 256, (g, w, h, posted) => {

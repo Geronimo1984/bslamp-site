@@ -23,7 +23,6 @@ function makeChapter({ id, kicker, title, path, of, steps, total = steps.length,
   sec.insertAdjacentHTML('beforeend', `
     <div class="ch-stick">
       <div class="ch-col">
-        <p class="kicker">${esc(kicker)}</p>
         <section class="w1c" aria-label="${esc(title)}">
           <header class="w1c-bar">
             <span class="w1c-logo" aria-hidden="true"></span>
@@ -93,7 +92,7 @@ function servicesChapter(t, live) {
   return makeChapter({
     id: 'services', kicker: s.kicker, title: s.title, path: ru ? 'Справочник' : 'Catalog', of: ru ? 'из' : 'of',
     steps, total: n,
-    foot: `<span class="ch-rate"><strong>${esc(s.rate)}</strong> · ${esc(s.rateNote)}</span>`,
+    foot: `<span class="ch-rate"><strong>${esc(s.rate)}</strong><span class="ch-rate-note"> · ${esc(s.rateNote)}</span></span>`,
     dollyStep: 1.8, dollySteps: n, // шаг табличек на стеллаже — табличка всё время в 4 м впереди
     onStep: (k) => live()?.focusSlot(k),
   });
