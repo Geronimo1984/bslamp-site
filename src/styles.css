@@ -710,3 +710,11 @@ body.has3d .scene-shade::after {
   background: radial-gradient(120% 95% at 62% 48%, transparent 55%, rgba(31, 29, 25, 0.22) 100%);
 }
 :root[data-theme="dark"] body.has3d .scene-shade::after { background: radial-gradient(120% 95% at 62% 48%, transparent 50%, rgba(0, 0, 0, 0.5) 100%); }
+
+/* мелкие подписи разделов (моноширинные капсом) — тонкие и не держатся на пёстром фоне:
+   даём им плотную «бирку», как складская этикетка */
+body.has3d .sec .kicker, body.has3d .pause-kicker, body.has3d .also-title {
+  width: fit-content; padding: 6px 12px 6px 10px; border-radius: 8px;
+  background: var(--paper); border: 1px solid var(--line); text-shadow: none; font-weight: 600;
+  box-shadow: 0 6px 18px -10px rgba(31, 29, 25, 0.35);
+}
