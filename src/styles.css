@@ -668,11 +668,18 @@ h2 { font: 500 clamp(32px, 4.2vw, 54px)/1.08 var(--f-head); letter-spacing: -0.0
   body.has3d .final-title { font-size: clamp(44px, 5vw, 76px); }
   /* вуаль под колонкой плотнее, справа сцена без пелены */
   body.has3d .scene-shade {
-    background: linear-gradient(90deg, rgba(243, 239, 230, 0.9) 0%, rgba(243, 239, 230, 0.84) calc(var(--pad-x) + var(--col) - 40px), rgba(243, 239, 230, 0.3) calc(var(--pad-x) + var(--col) + 120px), rgba(243, 239, 230, 0) calc(var(--pad-x) + var(--col) + 260px));
+    background: linear-gradient(90deg, rgba(243, 239, 230, 0.96) 0%, rgba(243, 239, 230, 0.93) calc(var(--pad-x) + var(--col) - 40px), rgba(243, 239, 230, 0.3) calc(var(--pad-x) + var(--col) + 120px), rgba(243, 239, 230, 0) calc(var(--pad-x) + var(--col) + 260px));
   }
   :root[data-theme="dark"] body.has3d .scene-shade {
-    background: linear-gradient(90deg, rgba(27, 27, 30, 0.92) 0%, rgba(27, 27, 30, 0.86) calc(var(--pad-x) + var(--col) - 40px), rgba(27, 27, 30, 0.3) calc(var(--pad-x) + var(--col) + 120px), rgba(27, 27, 30, 0) calc(var(--pad-x) + var(--col) + 260px));
+    background: linear-gradient(90deg, rgba(27, 27, 30, 0.96) 0%, rgba(27, 27, 30, 0.93) calc(var(--pad-x) + var(--col) - 40px), rgba(27, 27, 30, 0.3) calc(var(--pad-x) + var(--col) + 120px), rgba(27, 27, 30, 0) calc(var(--pad-x) + var(--col) + 260px));
   }
+  /* мелкий текст на вуали: темнее и на ступень крупнее, чтобы не терялся на фоне склада */
+  body.has3d { --muted: #3f3c36; --dim: #6b665c; }
+  :root[data-theme="dark"] body.has3d { --muted: #cfcabe; --dim: #a29d91; }
+  body.has3d .svc-more p, body.has3d .also p, body.has3d .stat span, body.has3d .founder small, body.has3d .rate span { font-size: 16px; }
+  body.has3d .about p { font-size: 18px; }
+  body.has3d .also-title, body.has3d .kicker { font-size: 14px; }
+  body.has3d .svc-num { font-size: 16px; }
   /* услуги: строки без подложки, «также делаем» — столбиком */
   body.has3d .svc-list { background: transparent; }
   body.has3d .also-grid { grid-template-columns: 1fr; }
