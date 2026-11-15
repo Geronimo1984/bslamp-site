@@ -310,6 +310,13 @@ function onScroll() {
   // главы (услуги, кейсы, этапы): шаги держат кадр, камера медленно наезжает; перелёт — в конце главы
   const ch = chapters?.[SECTIONS[i]]?.state(scrollY);
   if (ch) f = ch.flight;
+  // «О нас»: камера стоит у серверной, пока блок не досмотрен до конца; перелёт к заявке — только после
+  if (SECTIONS[i] === 'about') {
+    const about = document.getElementById('about');
+    const held = about.offsetTop + about.offsetHeight - innerHeight + 24; // нижняя точка остановки блока
+    const go = Math.max(held + 1, document.getElementById('order').offsetTop - 24);
+    f = Math.min(1, Math.max(0, (scrollY - held) / (go - held)));
+  }
   const eased = f * f * (3 - 2 * f);
   if (ch) dolly = ch.dolly * (1 - eased) ** 2; // наезд уходит быстрее, чем камера улетает, — без отката назад в конце перелёта
   const atEnd = scrollY + innerHeight >= document.documentElement.scrollHeight - 4;

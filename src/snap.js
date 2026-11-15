@@ -27,7 +27,9 @@ export function initSnap({ chapterIds }) {
         // обычный раздел: начало, и если он выше экрана — ещё точки до его конца
         const start = Math.max(0, top - 24);
         list.push(start);
-        for (let y = start + H * 0.8; y < top + sec.offsetHeight - H; y += H * 0.8) list.push(Math.round(y));
+        const end = top + sec.offsetHeight - H + 24; // низ раздела у нижнего края экрана
+        for (let y = start + H * 0.8; y < end - 40; y += H * 0.8) list.push(Math.round(y));
+        if (end > start + 40) list.push(Math.round(end)); // обязательно доезжаем до конца раздела
       }
     }
     return [...new Set(list)].sort((a, b) => a - b);
