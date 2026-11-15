@@ -892,8 +892,8 @@ body.has3d .sec.chapter-on { padding: 0; } /* перебивает общий о
   .w1c-status { min-height: 30px; padding: 6px 10px; font-size: 11px; }
   .w1c .ch-ticks i { width: 12px; }
   /* первый экран: окно с кодом меньше — не на полэкрана */
-  .code-card { max-height: 24svh; overflow: hidden; }
-  .code-card .bsl { font-size: 10px; line-height: 1.55; padding: 8px 10px; }
+  /* код на первом экране целиком, без обрезки: мельче шрифт и плотнее строки вместо ограничения высоты */
+  .code-card .bsl { font-size: 10px; line-height: 1.5; padding: 8px 10px 10px; min-height: 0; overflow-x: hidden; white-space: pre-wrap; }
   /* заявка: команды 1С одной строкой */
   .win-cmd { flex-wrap: nowrap; overflow-x: auto; }
   .win-cmd .cmd { white-space: nowrap; font-size: 13px; padding: 6px 10px; }
@@ -911,7 +911,11 @@ html.snap-touch { scroll-snap-type: y mandatory; scroll-behavior: auto; }
 @keyframes ch-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 /* положение окон глав на телефоне — выставлено ею в панели настройки 15.11 */
 @media (max-width: 1020px) {
-  #services.chapter-on { --chw-gap: 48px; --chw-width: 90%; }
-  #cases.chapter-on { --chw-gap: 32px; --chw-width: 88%; }
-  #process.chapter-on { --chw-gap: 60px; --chw-width: 84%; }
+  /* одинаково во всех главах (средние из её настроек) — окна стоят ровно, на одной линии */
+  .sec.chapter-on { --chw-gap: 44px; --chw-width: 88%; }
 }
+
+/* код: каждая строка — блок с висячим отступом; перенесённое продолжение строки встаёт под код, а не под номер */
+.b-line { display: block; padding-left: 2.2em; text-indent: -2.2em; }
+.b-line .b-ln { text-indent: 0; }
+.w1c-code .b-ln { width: 2.2em; }

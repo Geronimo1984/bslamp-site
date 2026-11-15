@@ -74,6 +74,7 @@ export function typeBsl(el, lang, instant) {
 }
 
 // готовый фрагмент кода с номерами строк и подсветкой (без печати) — для окон в главах
-export function bslHtml(code) {
-  return code.split('\n').map((ln, i) => `<span class="b-ln">${i + 1}</span>${highlight(ln)}`).join('\n');
+// compact: телефон — без выравнивающих пробелов (при переносе строк они выглядят криво)
+export function bslHtml(code, compact = matchMedia('(max-width: 1020px)').matches) {
+  return code.split('\n').map((ln, i) => `<span class="b-line"><span class="b-ln">${i + 1}</span>${highlight(compact ? ln.replace(/ {2,}/g, ' ') : ln)}</span>`).join('');
 }
