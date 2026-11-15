@@ -909,3 +909,9 @@ html.snap-touch { scroll-snap-type: y mandatory; scroll-behavior: auto; }
   .w1c .ch-step.on { display: block; animation: ch-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1); }
 }
 @keyframes ch-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+/* положение окон глав на телефоне — выставлено ею в панели настройки 15.11 */
+@media (max-width: 1020px) {
+  #services.chapter-on { --chw-gap: 48px; --chw-width: 90%; }
+  #cases.chapter-on { --chw-gap: 32px; --chw-width: 88%; }
+  #process.chapter-on { --chw-gap: 60px; --chw-width: 84%; }
+}

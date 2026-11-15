@@ -96,7 +96,7 @@ function servicesChapter(t, live) {
     foot: `<span class="ch-rate"><strong>${esc(s.rate)}</strong><span class="ch-rate-note"> · ${esc(s.rateNote)}</span></span>`,
     // компьютер: шаг табличек (табличка всё время в 4 м впереди); телефон: камера едет медленнее и держится дальше —
     // в узком кадре одновременно видны стеллаж, текущая табличка и ТСД в конце прохода
-    dollyStep: matchMedia('(max-width: 1020px)').matches ? 1.0 : 1.8, dollySteps: n,
+    dollyStep: matchMedia('(max-width: 1020px)').matches ? 1.15 : 1.8, dollySteps: n,
     onStep: (k) => live()?.focusSlot(k),
   });
 }
@@ -136,7 +136,7 @@ function processChapter(t, live) {
     <pre class="w1c-code bsl">${bslHtml(p.codes?.[k] ?? query)}</pre>`); // у каждого этапа свой фрагмент кода
   return makeChapter({
     id: 'process', kicker: p.kicker, title: p.title, path: p.console, of: ru ? 'из' : 'of',
-    steps, dollyStep: 0.25,
+    steps, dollyStep: matchMedia('(max-width: 1020px)').matches ? 0.35 : 0.25,
     onStep: (k) => live()?.setShip(k + 1),
   });
 }

@@ -18,9 +18,9 @@ const SECTIONS = ['hero', 'p-forklift', 'services', 'p-tsd', 'cases', 'p-truck',
 const SECTION_KEY = [0, 1, 1, 2, 2, 3, 3, 4, 4, 5];
 const KEY_COUNT = 6;
 // смещение взгляда камеры в главах на узком экране (метры): x — вбок, y — вниз (объекты поднимаются в кадре)
-const CH_LOOK = { services: [0.8, -0.3, 0], cases: [0, -0.7, 0], process: [-0.4, -0.7, 0] };
+const CH_LOOK = { services: [1.4, -0.3, 0], cases: [-0.2, 0.15, 0], process: [-0.65, 0.55, 0] }; // выставлено ею в панели 15.11
 // сдвиг самой камеры в главах на узком экране (метры): x — вбок, y — выше, z — вперёд/назад
-const CH_CAM = { services: [0, 0, 0], cases: [0, 0, 0], process: [0, 0, 0] };
+const CH_CAM = { services: [-1.1, 0, 0], cases: [0.25, 0, 0], process: [1.05, -1.25, 0.2] }; // выставлено ею в панели 15.11
 const narrow = matchMedia('(max-width: 1020px)').matches;
 
 let lang = pickLang();
