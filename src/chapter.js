@@ -9,7 +9,7 @@ import { bslHtml } from './bsl.js';
 const FLIGHT_SHARE = 0.14; // доля прокрутки главы на перелёт к следующему кадру
 
 export function chapterSupported({ scene, reduced }) {
-  return !!scene && !reduced && matchMedia('(min-width: 1021px) and (pointer: fine)').matches;
+  return !!scene && !reduced; // и компьютер, и телефон (на телефоне окно снизу, склад сверху)
 }
 
 const pad = (n) => String(n).padStart(2, '0');
@@ -93,7 +93,9 @@ function servicesChapter(t, live) {
     id: 'services', kicker: s.kicker, title: s.title, path: ru ? 'Справочник' : 'Catalog', of: ru ? 'из' : 'of',
     steps, total: n,
     foot: `<span class="ch-rate"><strong>${esc(s.rate)}</strong><span class="ch-rate-note"> · ${esc(s.rateNote)}</span></span>`,
-    dollyStep: 1.8, dollySteps: n, // шаг табличек на стеллаже — табличка всё время в 4 м впереди
+    // компьютер: шаг табличек (табличка всё время в 4 м впереди); телефон: камера едет медленнее и держится дальше —
+    // в узком кадре одновременно видны стеллаж, текущая табличка и ТСД в конце прохода
+    dollyStep: matchMedia('(max-width: 1020px)').matches ? 1.0 : 1.8, dollySteps: n,
     onStep: (k) => live()?.focusSlot(k),
   });
 }

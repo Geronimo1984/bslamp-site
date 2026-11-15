@@ -62,29 +62,34 @@ export function initLive(scene3d, { lang, reduced }) {
   // табло в кадре своей локации: точка экрана (ndc −1…1) на расстоянии dist от камеры этого кадра.
   // Пересчитывается при изменении окна — на узком экране табло сдвигается внутрь и не обрезается краем
   const frameCam = new THREE.PerspectiveCamera();
+  const phoneFov = matchMedia('(max-width: 760px), (pointer: coarse)').matches;
+  const narrow = matchMedia('(max-width: 1020px)').matches;
   const tmpV = new THREE.Vector3();
   const framed = [];
-  function placeInFrame({ mesh, station, x, y, dist }) {
+  function placeInFrame(cfg) {
+    const { mesh, station, x, y, dist } = cfg;
     const st = scene3d.keys[station];
-    frameCam.fov = st.fov || 50;
+    frameCam.fov = (st.fov || 50) * (phoneFov ? 62 / 50 : 1); // на телефоне сцена шире по углу (как в scene.js)
     frameCam.aspect = innerWidth / innerHeight;
     frameCam.position.set(...st.pos);
     frameCam.lookAt(...st.look);
     frameCam.updateProjectionMatrix();
     frameCam.updateMatrixWorld();
-    const halfW = mesh.geometry.parameters.width / 2;
+    mesh.scale.setScalar(cfg.scale ?? 1);
+    const halfW = (mesh.geometry.parameters.width * (cfg.scale ?? 1)) / 2;
     const at = (nx) => tmpV.set(nx, y, 0.5).unproject(frameCam).sub(frameCam.position).normalize().multiplyScalar(dist).add(frameCam.position).clone();
     // сдвигаем внутрь, пока правый край табло (с запасом на покачивание камеры мышью) не окажется в кадре
     let nx = x;
     for (let k = 0; k < 40; k++) {
       const c = at(nx);
       const right = c.clone().add(new THREE.Vector3(frameCam.matrixWorld.elements[0], 0, frameCam.matrixWorld.elements[2]).normalize().multiplyScalar(halfW)).project(frameCam);
-      if (right.x <= 0.86 || nx < 0.1) break;
+      if (right.x <= 0.86 || nx < -0.8) break;
       nx -= 0.02;
     }
     hang(mesh, at(nx).toArray(), station);
   }
   function frameBoard(cfg) {
+    if (narrow && cfg.narrow) Object.assign(cfg, cfg.narrow); // узкий экран: своё место табло (верхняя часть кадра)
     framed.push(cfg);
     placeInFrame(cfg);
   }
@@ -191,7 +196,7 @@ export function initLive(scene3d, { lang, reduced }) {
   });
   ship.redraw(0);
   const shipBoard = plate(ship.tex, 2.2, 0.55);
-  frameBoard({ mesh: shipBoard, station: 3, x: 0.48, y: 0.5, dist: 5.8 }); // справа вверху кадра этапов
+  frameBoard({ mesh: shipBoard, station: 3, x: 0.48, y: 0.5, dist: 5.8, narrow: { x: -0.32, y: 0.05, dist: 3.6, scale: 0.7 } }); // справа вверху кадра этапов
   let shipN = 0;
   let shipTimer = null;
   function shipTo(n) {
@@ -222,7 +227,7 @@ export function initLive(scene3d, { lang, reduced }) {
   const sw = statusBoard.geometry.parameters.width;
   dot.position.set(-sw / 2 + (78 / 1024) * sw, 0, 0.005); // точка — на месте кружка в текстуре
   statusBoard.add(dot);
-  frameBoard({ mesh: statusBoard, station: 4, x: 0.5, y: 0.5, dist: 3.4 }); // перед стойками (до них ~5,5 м), в кадре «О нас»
+  frameBoard({ mesh: statusBoard, station: 4, x: 0.5, y: 0.5, dist: 3.4, narrow: { x: 0.1, y: 0.55, dist: 3.4 } }); // перед стойками (до них ~5,5 м), в кадре «О нас»
 
   // ---------- 5. табло заявки (заявка) ----------
   const orderB = board(1024, 256, (g, w, h, posted) => {

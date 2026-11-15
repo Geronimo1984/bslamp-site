@@ -17,6 +17,9 @@ const mobile = matchMedia('(max-width: 760px), (pointer: coarse)').matches;
 const SECTIONS = ['hero', 'p-forklift', 'services', 'p-tsd', 'cases', 'p-truck', 'process', 'p-server', 'about', 'order'];
 const SECTION_KEY = [0, 1, 1, 2, 2, 3, 3, 4, 4, 5];
 const KEY_COUNT = 6;
+// смещение взгляда камеры в главах на узком экране (метры): x — вбок, y — вниз (объекты поднимаются в кадре)
+const CH_LOOK = { services: [0.8, -0.3, 0], cases: [0, -0.7, 0], process: [-0.4, -0.7, 0] };
+const narrow = matchMedia('(max-width: 1020px)').matches;
 
 let lang = pickLang();
 let theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light'; // по умолчанию светлая
@@ -324,6 +327,9 @@ function onScroll() {
   const key = SECTION_KEY[i] + (SECTION_KEY[i + 1] - SECTION_KEY[i]) * eased;
   scene.setProgress(atEnd ? 1 : key / (KEY_COUNT - 1));
   scene.setDolly(dolly);
+  // телефон: в главе окно занимает низ экрана — смещаем взгляд, чтобы таблички/ТСД/табло были в верхней части кадра
+  const off = ch && narrow ? (CH_LOOK[SECTIONS[i]] ?? [0, 0, 0]) : [0, 0, 0];
+  scene.setLookOffset(...off.map((v) => v * (1 - eased)));
 }
 let cameraBound = false;
 function bindCamera() {

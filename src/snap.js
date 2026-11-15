@@ -35,6 +35,33 @@ export function initSnap({ chapterIds }) {
     return [...new Set(list)].sort((a, b) => a - b);
   }
 
+  // телефон и планшет: жесты не перехватываем — браузер сам «прилипает» к точкам (CSS scroll-snap).
+  // В документ кладутся невидимые метки на позициях точек; scroll-snap-stop: always — один свайп = одна точка
+  const touch = matchMedia('(pointer: coarse), (max-width: 1020px)').matches;
+  let marks = [];
+  function buildMarks() {
+    marks.forEach((m) => m.remove());
+    const list = stops();
+    const bottom = document.documentElement.scrollHeight - innerHeight;
+    if (list[list.length - 1] < bottom - 40) list.push(bottom); // подвал тоже досягаем
+    marks = list.map((y) => {
+      const m = document.createElement('i');
+      m.className = 'snap-mark';
+      m.style.top = `${y}px`;
+      document.body.append(m);
+      return m;
+    });
+  }
+  if (touch) {
+    document.documentElement.classList.add('snap-touch');
+    buildMarks();
+    let t = null;
+    const later = () => { clearTimeout(t); t = setTimeout(buildMarks, 300); };
+    addEventListener('resize', later);
+    document.fonts?.ready.then(buildMarks);
+    new ResizeObserver(later).observe(document.body);
+  }
+
   const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - (-2 * x + 2) ** 3 / 2);
   function flyTo(y) {
     const from = scrollY;
@@ -66,27 +93,30 @@ export function initSnap({ chapterIds }) {
 
   const freeZone = (el) => el?.closest?.('input, textarea, select, .journal-list, .nav-mobile, .scrollable');
 
-  addEventListener('wheel', (e) => {
-    if (freeZone(e.target) || e.ctrlKey) return;
-    const list = stops();
-    if (e.deltaY > 0 && scrollY >= list[list.length - 1] - 4) return; // подвал
-    e.preventDefault();
-    if (animating || performance.now() < unlockAt) return;
-    acc += e.deltaY;
-    clearTimeout(accTimer);
-    accTimer = setTimeout(() => { acc = 0; }, 160);
-    if (Math.abs(acc) < 30) return; // мелкое касание тачпада — не шаг
-    const dir = Math.sign(acc);
-    acc = 0;
-    step(dir);
-  }, { passive: false });
+  // компьютер: колесо и клавиши ведём сами (на телефоне — прилипание браузера, см. выше)
+  if (!touch) {
+    addEventListener('wheel', (e) => {
+      if (freeZone(e.target) || e.ctrlKey) return;
+      const list = stops();
+      if (e.deltaY > 0 && scrollY >= list[list.length - 1] - 4) return; // подвал
+      e.preventDefault();
+      if (animating || performance.now() < unlockAt) return;
+      acc += e.deltaY;
+      clearTimeout(accTimer);
+      accTimer = setTimeout(() => { acc = 0; }, 160);
+      if (Math.abs(acc) < 30) return; // мелкое касание тачпада — не шаг
+      const dir = Math.sign(acc);
+      acc = 0;
+      step(dir);
+    }, { passive: false });
 
-  addEventListener('keydown', (e) => {
-    if (freeZone(e.target) || e.altKey || e.metaKey || e.ctrlKey) return;
-    const dir = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1 : ['ArrowUp', 'PageUp'].includes(e.key) ? -1 : 0;
-    if (!dir) return;
-    if (step(dir)) e.preventDefault();
-  });
+    addEventListener('keydown', (e) => {
+      if (freeZone(e.target) || e.altKey || e.metaKey || e.ctrlKey) return;
+      const dir = ['ArrowDown', 'PageDown', ' '].includes(e.key) ? 1 : ['ArrowUp', 'PageUp'].includes(e.key) ? -1 : 0;
+      if (!dir) return;
+      if (step(dir)) e.preventDefault();
+    });
+  }
 
   // ссылки меню (#services, #cases…) — тем же перелётом к первой точке раздела
   return {
