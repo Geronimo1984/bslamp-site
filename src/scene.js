@@ -63,11 +63,11 @@ export function createScene(canvas, { mobile }) {
   const tsd = addTSD(scene);
   const truck = addTruck(scene);
   const servers = addServerRoom(scene);
-  // Детальные модели подгружаются после первого кадра и заменяют простые фигуры
-  // модели — после первых кадров, чтобы вход на сайт не подтормаживал (распаковка моделей занимает процессор)
-  const startModels = () => loadModels(scene, { boxes: shelves.boxes, tsd, tsdRotY: Math.PI, truck: truck.group, racks: servers.racks, leds: servers.leds });
-  if ('requestIdleCallback' in window) requestIdleCallback(startModels, { timeout: 1500 });
-  else setTimeout(startModels, 800);
+  // Модели грузятся сразу (сайт прикрыт заставкой, пока склад не готов — без «проявления» текстур на глазах).
+  // ready — когда модели на месте, шейдеры собраны и текстуры загружены в видеокарту
+  const modelsLoaded = loadModels(scene, { boxes: shelves.boxes, tsd, tsdRotY: Math.PI, truck: truck.group, racks: servers.racks, leds: servers.leds });
+  let resolveReady;
+  const ready = new Promise((r) => { resolveReady = r; });
   const barcodes = addBarcodeParticles(scene, mobile ? 90 : 260);
   const backdrop = addBackdrop(scene, { mobile }); // окна, фермы, доки, надписи, колонны, мелочи
 
@@ -230,7 +230,18 @@ export function createScene(canvas, { mobile }) {
     backdrop.setTheme(name);
   }
 
+  // склад готов: модели загружены → текстуры в видеокарту, шейдеры собраны заранее, затем пара кадров
+  modelsLoaded.then(() => {
+    scene.traverse((o) => {
+      const mats = o.material ? (Array.isArray(o.material) ? o.material : [o.material]) : [];
+      mats.forEach((m) => ['map', 'normalMap', 'roughnessMap', 'metalnessMap', 'emissiveMap'].forEach((k) => m[k] && renderer.initTexture(m[k])));
+    });
+    renderer.compile(scene, camera);
+    requestAnimationFrame(() => requestAnimationFrame(() => resolveReady()));
+  });
+
   return {
+    ready,
     setTheme,
     stations: KEYS.length,
     keys: KEYS, // кадры локаций (pos/look/fov) — чтобы табло в «живом складе» смотрели в кадр

@@ -9,6 +9,10 @@ import { applyLayout, TSD_LAYOUT } from './layout.js';
 const BASE = `${import.meta.env.BASE_URL}models/`;
 
 const loader = new GLTFLoader();
+// полоска на заставке: сколько моделей уже загружено
+THREE.DefaultLoadingManager.onProgress = (_url, loaded, total) => {
+  document.getElementById('boot')?.style.setProperty('--p', String(Math.max(0.05, loaded / total)));
+};
 loader.setMeshoptDecoder(MeshoptDecoder);
 
 // Вписать модель в нужный размер: по высоте или по длине; низ — на y = 0, центр — в начале координат.

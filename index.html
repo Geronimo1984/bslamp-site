@@ -20,17 +20,36 @@
     // тема до отрисовки — чтобы не мигала светлая при сохранённой тёмной
     try { if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (e) {}
   </script>
+  <!-- модели склада начинают качаться сразу, ещё до скриптов -->
+  <link rel="preload" href="/models/box.glb" as="fetch" crossorigin>
+  <link rel="preload" href="/models/forklift.glb" as="fetch" crossorigin>
+  <link rel="preload" href="/models/pallet.glb" as="fetch" crossorigin>
+  <link rel="preload" href="/models/tsd.glb" as="fetch" crossorigin>
+  <link rel="preload" href="/models/truck.glb" as="fetch" crossorigin>
+  <link rel="preload" href="/models/server.glb" as="fetch" crossorigin>
+  <style>
+    /* заставка до готовности склада: лампочка BSLamp и полоска загрузки (стили здесь — видны сразу, до скриптов) */
+    #boot { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: #f3efe6; transition: opacity .6s ease, visibility .6s; }
+    :root[data-theme="dark"] #boot { background: #1b1b1e; }
+    #boot.off { opacity: 0; visibility: hidden; }
+    #boot .b-in { display: grid; justify-items: center; gap: 18px; }
+    #boot svg { width: 56px; height: 56px; animation: boot-glow 1.4s ease-in-out infinite alternate; }
+    #boot .b-bar { width: 140px; height: 3px; border-radius: 2px; background: rgba(31,29,25,.12); overflow: hidden; }
+    #boot .b-bar i { display: block; height: 100%; width: calc(var(--p, 0.05) * 100%); background: #ffd400; transition: width .3s ease; }
+    @keyframes boot-glow { from { filter: drop-shadow(0 0 0 rgba(255,212,0,0)); } to { filter: drop-shadow(0 0 14px rgba(255,212,0,.8)); } }
+  </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
 </head>
 <body>
+  <div id="boot" aria-hidden="true"><div class="b-in"><svg viewBox="0 0 32 32"><path d="M16 5a8 8 0 0 0-4.8 14.4c.8.6 1.3 1.5 1.3 2.5V23h7v-1.1c0-1 .5-1.9 1.3-2.5A8 8 0 0 0 16 5z" fill="#ffd400"/><g fill="#1f1d19"><rect x="12.5" y="10" width="1.2" height="8"/><rect x="14.6" y="10" width=".7" height="8"/><rect x="16.2" y="10" width="1.8" height="8"/><rect x="18.6" y="10" width=".7" height="8"/></g><rect x="12.5" y="24.5" width="7" height="2.5" rx="1" fill="#e5332a"/></svg><div class="b-bar"><i></i></div></div></div>
   <canvas id="scene" aria-hidden="true"></canvas>
   <div class="scene-shade" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>
   <div id="cursor" aria-hidden="true"><span class="cur-line"></span><span class="cur-label"></span></div>
   <div id="app"></div>
-  <noscript><p style="padding:24px;color:#1f1d19">BSLamp — разработка 1С, Нигина Ражабова. Телефон: +7 (995) 079-37-64.</p></noscript>
+  <noscript><style>#boot{display:none}</style><p style="padding:24px;color:#1f1d19">BSLamp — разработка 1С, Нигина Ражабова. Телефон: +7 (995) 079-37-64.</p></noscript>
   <script type="module" src="/src/main.js"></script>
 </body>
 </html>

@@ -420,7 +420,25 @@ async function initScene() {
   }
 }
 
+// заставка: прогресс загрузки моделей, убирается, когда склад готов (или через 10 с, чтобы сайт не завис)
+function initBoot() {
+  const boot = document.getElementById('boot');
+  if (!boot) return () => {};
+  let done = false;
+  const hide = () => {
+    if (done) return;
+    done = true;
+    boot.classList.add('off');
+    setTimeout(() => boot.remove(), 700);
+  };
+  setTimeout(hide, 10000);
+  return hide;
+}
+const hideBoot = initBoot();
+
 initScene().then(async () => {
+  if (!scene) hideBoot();
+  else scene.ready.then(hideBoot);
   applyTheme(theme, false);
   render();
   initCursor();
