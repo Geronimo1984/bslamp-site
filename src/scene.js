@@ -134,13 +134,15 @@ export function createScene(canvas, { mobile }) {
     tilt.set(clamp((e.gamma - tiltBase.g) / 40), clamp((e.beta - tiltBase.b) / 40));
     tiltOn = true;
   }
-  if (mobile && 'DeviceOrientationEvent' in window) {
-    const ask = DeviceOrientationEvent.requestPermission;
-    if (typeof ask === 'function') {
-      const req = () => ask().then((st) => { if (st === 'granted') addEventListener('deviceorientation', onTilt); }).catch(() => {});
-      addEventListener('touchend', req, { once: true });
-    } else {
+  // Разрешение на датчик не спрашиваем: iPhone показывает пугающий системный запрос. Где датчик доступен
+  // без вопросов (Android) — камера следует за наклоном; на iPhone — камера сама слегка «дышит», как с рук
+  let handheld = false;
+  if (mobile) {
+    if ('DeviceOrientationEvent' in window && typeof DeviceOrientationEvent.requestPermission !== 'function') {
       addEventListener('deviceorientation', onTilt);
+    } else {
+      handheld = true;
+      tiltOn = true;
     }
   }
 
@@ -204,6 +206,8 @@ export function createScene(canvas, { mobile }) {
     if (tiltOn) {
       // сглаженный наклон + лёгкое «дыхание» рук — камера живая, но не дёрганая
       const before = mouse.x + mouse.y;
+      // без датчика — медленный плавный дрейф, будто камеру держат в руках
+      if (handheld) tilt.set(Math.sin(t * 0.37) * 0.09 + Math.sin(t * 0.83) * 0.04, Math.sin(t * 0.29 + 2) * 0.06 + Math.sin(t * 0.71) * 0.03);
       mouse.lerp(tilt, 0.08);
       mouse.x += Math.sin(t * 1.3) * 0.004;
       mouse.y += Math.sin(t * 1.7 + 1) * 0.003;
