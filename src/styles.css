@@ -860,3 +860,7 @@ body.has3d .sec.chapter-on > .ch-stick { max-width: none; }
 .ch-list li span { font-size: 14.5px; }
 .w1c-bar { height: 40px; font-size: 13.5px; }
 .w1c-status { min-height: 38px; }
+
+/* окно главы прижато к левому краю экрана (а не к сетке 1200 px) — на широком мониторе не заезжает на центр сцены */
+.ch-stick { padding-left: clamp(24px, 3.5vw, 72px); padding-right: clamp(24px, 3.5vw, 72px); }
+body.has3d .sec.chapter-on { padding: 0; } /* перебивает общий отступ секций (var(--pad-x)) — окно от края экрана */

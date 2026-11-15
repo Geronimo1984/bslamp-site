@@ -6,6 +6,7 @@ import { TEXT } from './content.js';
 import { appMarkup, esc } from './markup.js';
 import { typeBsl } from './bsl.js';
 import { chapterSupported, initChapters } from './chapter.js';
+import { initSnap } from './snap.js';
 import { initOrder, docNumber } from './order.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -79,6 +80,8 @@ function render() {
   }
 
   chapters = chapterSupported({ scene, reduced }) ? initChapters(t, () => live) : null;
+  // пошаговая прокрутка: колесо — сразу перелёт к следующей точке (только вместе с главами, один раз)
+  if (chapters && !render.snap) render.snap = initSnap({ chapterIds: Object.keys(chapters) });
   initCases(t);
   initMagnet();
   typeBsl(document.getElementById('bsl'), lang, reduced);
