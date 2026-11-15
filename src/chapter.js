@@ -69,8 +69,9 @@ function makeChapter({ id, kicker, title, path, of, steps, total = steps.length,
       const slot = Math.min(dollySteps - 1, Math.max(0, sp * n - 0.5));
       const flight = p <= stepsEnd ? 0 : (p - stepsEnd) / FLIGHT_SHARE;
       col.style.opacity = String(1 - Math.min(1, flight * 2.2));
-      return { dolly: slot * dollyStep, flight };
+      return { dolly: slot * this.dollyStep, flight };
     },
+    dollyStep, // меняется панелью настройки (?tune=1)
     refresh() { shown = -1; },
   };
 }

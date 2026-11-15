@@ -19,6 +19,8 @@ const SECTION_KEY = [0, 1, 1, 2, 2, 3, 3, 4, 4, 5];
 const KEY_COUNT = 6;
 // смещение взгляда камеры в главах на узком экране (метры): x — вбок, y — вниз (объекты поднимаются в кадре)
 const CH_LOOK = { services: [0.8, -0.3, 0], cases: [0, -0.7, 0], process: [-0.4, -0.7, 0] };
+// сдвиг самой камеры в главах на узком экране (метры): x — вбок, y — выше, z — вперёд/назад
+const CH_CAM = { services: [0, 0, 0], cases: [0, 0, 0], process: [0, 0, 0] };
 const narrow = matchMedia('(max-width: 1020px)').matches;
 
 let lang = pickLang();
@@ -85,6 +87,11 @@ function render() {
   chapters = chapterSupported({ scene, reduced }) ? initChapters(t, () => live) : null;
   // пошаговая прокрутка: колесо — сразу перелёт к следующей точке (только вместе с главами, один раз)
   if (chapters && !render.snap) render.snap = initSnap({ chapterIds: Object.keys(chapters) });
+  // панель настройки кадров и окон глав (только в разработке: адрес с ?tune=1)
+  if (import.meta.env.DEV && chapters && new URLSearchParams(location.search).has('tune') && !render.tune) {
+    render.tune = true;
+    import('./tune.js').then(({ initTune }) => initTune({ CH_LOOK, CH_CAM, chapters, update: onScroll }));
+  }
   initCases(t);
   initMagnet();
   typeBsl(document.getElementById('bsl'), lang, reduced);
@@ -330,6 +337,8 @@ function onScroll() {
   // телефон: в главе окно занимает низ экрана — смещаем взгляд, чтобы таблички/ТСД/табло были в верхней части кадра
   const off = ch && narrow ? (CH_LOOK[SECTIONS[i]] ?? [0, 0, 0]) : [0, 0, 0];
   scene.setLookOffset(...off.map((v) => v * (1 - eased)));
+  const camOff = ch && narrow ? (CH_CAM[SECTIONS[i]] ?? [0, 0, 0]) : [0, 0, 0];
+  scene.setCamOffset(...camOff.map((v) => v * (1 - eased)));
 }
 let cameraBound = false;
 function bindCamera() {

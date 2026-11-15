@@ -90,6 +90,9 @@ export function createScene(canvas, { mobile }) {
   // сдвиг точки взгляда (телефон: окно главы внизу — взгляд ниже и вбок, чтобы нужное было в верхней части кадра)
   const lookOffTarget = new THREE.Vector3();
   const lookOff = new THREE.Vector3();
+  // сдвиг самой камеры (вбок / выше / вперёд) — для настройки кадров глав на телефоне
+  const camOffTarget = new THREE.Vector3();
+  const camOff = new THREE.Vector3();
   let current = 0;
   let baseExposure = 1.0;
   let exposureK = 1; // множитель яркости — для заставки «включается свет»
@@ -158,6 +161,9 @@ export function createScene(canvas, { mobile }) {
     }
     lookOff.lerp(lookOffTarget, 0.06);
     camLook.add(lookOff);
+    camOff.lerp(camOffTarget, 0.06);
+    camPos.add(camOff);
+    camLook.add(camOff);
     camPos.x += mouse.x * 0.6;
     camPos.y -= mouse.y * 0.35;
     camera.position.copy(camPos);
@@ -231,6 +237,7 @@ export function createScene(canvas, { mobile }) {
     setProgress(p) { target = p; },
     setDolly(d) { dollyTarget = d; },
     setLookOffset(x, y, z) { lookOffTarget.set(x, y, z); },
+    setCamOffset(x, y, z) { camOffTarget.set(x, y, z); },
     curve: posCurve, // путь камеры — чтобы ставить предметы переднего плана рядом с ним, но не на нём
     // для режима «мир»: стенды рисуются той же камерой
     camera,
