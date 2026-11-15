@@ -19,6 +19,9 @@
   <script>
     // тема до отрисовки — чтобы не мигала светлая при сохранённой тёмной
     try { if (localStorage.getItem('theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (e) {}
+    // при открытии и перезагрузке — всегда с первого экрана: браузер не возвращает прошлую прокрутку и не прыгает к #якорю
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
   </script>
   <!-- модели склада начинают качаться сразу, ещё до скриптов -->
   <link rel="preload" href="/models/box.glb" as="fetch" crossorigin>

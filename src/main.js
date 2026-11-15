@@ -444,6 +444,7 @@ function initBoot() {
 const hideBoot = initBoot();
 
 initScene().then(async () => {
+  window.scrollTo({ top: 0, behavior: 'instant' }); // старт всегда с первого экрана (см. index.html)
   if (!scene) hideBoot();
   else scene.ready.then(hideBoot);
   applyTheme(theme, false);
