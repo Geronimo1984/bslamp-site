@@ -426,12 +426,12 @@ function initBoot() {
   if (!boot) return () => {};
   let done = false;
   let ready = false;
-  const MIN = reduced ? 0 : 2700; // анимация «идеи» доигрывается до конца, даже если склад уже готов
+  const MIN = reduced ? 0 : 1500; // анимация «идеи» доигрывается до конца, даже если склад уже готов
   const finish = () => {
     if (done) return;
     done = true;
     boot.classList.add('off'); // свет лампы заливает экран, заставка тает
-    setTimeout(() => boot.remove(), 900);
+    setTimeout(() => boot.remove(), 600);
   };
   const hide = () => {
     if (ready) return;
