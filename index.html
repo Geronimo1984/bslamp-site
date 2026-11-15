@@ -28,22 +28,69 @@
   <link rel="preload" href="/models/truck.glb" as="fetch" crossorigin>
   <link rel="preload" href="/models/server.glb" as="fetch" crossorigin>
   <style>
-    /* заставка до готовности склада: лампочка BSLamp и полоска загрузки (стили здесь — видны сразу, до скриптов) */
-    #boot { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; background: #f3efe6; transition: opacity .6s ease, visibility .6s; }
-    :root[data-theme="dark"] #boot { background: #1b1b1e; }
+    /* Заставка «возникла идея»: лампочка вылетает снизу, мигает, загорается — свет заливает экран и открывает сайт.
+       Стили прямо здесь: видны сразу, до загрузки скриптов */
+    #boot { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; overflow: hidden;
+      background: radial-gradient(ellipse at 50% 55%, #26241f 0%, #141312 70%); transition: opacity .5s ease .25s, visibility .75s; }
     #boot.off { opacity: 0; visibility: hidden; }
-    #boot .b-in { display: grid; justify-items: center; gap: 18px; }
-    #boot svg { width: 56px; height: 56px; animation: boot-glow 1.4s ease-in-out infinite alternate; }
-    #boot .b-bar { width: 140px; height: 3px; border-radius: 2px; background: rgba(31,29,25,.12); overflow: hidden; }
-    #boot .b-bar i { display: block; height: 100%; width: calc(var(--p, 0.05) * 100%); background: #ffd400; transition: width .3s ease; }
-    @keyframes boot-glow { from { filter: drop-shadow(0 0 0 rgba(255,212,0,0)); } to { filter: drop-shadow(0 0 14px rgba(255,212,0,.8)); } }
+    #boot .b-stage { position: relative; display: grid; justify-items: center; }
+    /* свечение за лампой: мигает вместе с ней, в конце раскрывается на весь экран */
+    #boot .b-glow { position: absolute; left: 50%; top: 58px; width: 260px; height: 260px; margin: -130px 0 0 -130px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,226,92,.75) 0%, rgba(255,212,0,.28) 35%, rgba(255,212,0,0) 70%); opacity: 0;
+      animation: b-flick 1.1s linear .85s forwards; }
+    #boot.off .b-glow { animation: b-burst .7s cubic-bezier(.3,0,.2,1) forwards; }
+    /* лампа: вылет снизу с вращением и лёгким перелётом, затем покачивание */
+    #boot .b-bulb { width: 116px; height: 116px; position: relative; z-index: 1;
+      animation: b-fly .85s cubic-bezier(.2,.9,.25,1.25) both, b-sway 2.4s ease-in-out 1.9s infinite alternate; }
+    #boot .b-lit { opacity: 0; animation: b-flick 1.1s linear .85s forwards; }
+    /* лучики «идеи» вокруг лампы */
+    #boot .b-rays { position: absolute; left: 50%; top: 58px; width: 0; height: 0; }
+    #boot .b-rays i { position: absolute; left: -2px; top: -2px; width: 4px; height: 22px; border-radius: 2px; background: #ffd400;
+      transform-origin: 2px 2px; opacity: 0; animation: b-ray .55s cubic-bezier(.2,.8,.3,1) 1.9s forwards; }
+    #boot .b-name { margin-top: 26px; font: 600 30px/1 Unbounded, Inter, system-ui, sans-serif; letter-spacing: -.02em; color: #f3efe6;
+      opacity: 0; transform: translateY(10px); animation: b-in .6s ease 2s forwards; }
+    #boot .b-name b { color: #ffd400; font-weight: 600; }
+    #boot .b-tag { margin-top: 10px; font: 500 13px/1.3 Inter, system-ui, sans-serif; color: rgba(243,239,230,.6);
+      opacity: 0; animation: b-in .6s ease 2.2s forwards; }
+    #boot .b-bar { margin-top: 22px; width: 120px; height: 2px; border-radius: 1px; background: rgba(243,239,230,.12); overflow: hidden;
+      opacity: 0; animation: b-in .4s ease 2.3s forwards; }
+    #boot .b-bar i { display: block; height: 100%; width: calc(var(--p, .05) * 100%); background: #ffd400; transition: width .3s ease; }
+    @keyframes b-fly { 0% { transform: translateY(70vh) rotate(-35deg) scale(.55); opacity: 0; }
+      15% { opacity: 1; } 70% { transform: translateY(-14px) rotate(6deg) scale(1.04); } 100% { transform: none; } }
+    @keyframes b-sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+    /* мигание при включении: вспыхнула — погасла — ещё раз — горит */
+    @keyframes b-flick { 0% { opacity: 0; } 8% { opacity: 1; } 14% { opacity: .1; } 26% { opacity: .9; } 32% { opacity: .2; }
+      40% { opacity: 1; } 46% { opacity: .55; } 60%, 100% { opacity: 1; } }
+    @keyframes b-ray { from { opacity: 0; height: 0; } 40% { opacity: 1; } to { opacity: .9; height: 22px; } }
+    @keyframes b-in { to { opacity: 1; transform: none; } }
+    /* свет заливает экран — за ним открывается сайт */
+    @keyframes b-burst { to { transform: scale(14); opacity: 1; } }
+    #boot:not(.off) ~ #cursor { opacity: 0; } /* курсор-сканер сайта не рисуем поверх заставки */
+    @media (prefers-reduced-motion: reduce) { #boot * { animation-duration: .01s !important; animation-delay: 0s !important; } }
   </style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&family=Unbounded:wght@500;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="boot" aria-hidden="true"><div class="b-in"><svg viewBox="0 0 32 32"><path d="M16 5a8 8 0 0 0-4.8 14.4c.8.6 1.3 1.5 1.3 2.5V23h7v-1.1c0-1 .5-1.9 1.3-2.5A8 8 0 0 0 16 5z" fill="#ffd400"/><g fill="#1f1d19"><rect x="12.5" y="10" width="1.2" height="8"/><rect x="14.6" y="10" width=".7" height="8"/><rect x="16.2" y="10" width="1.8" height="8"/><rect x="18.6" y="10" width=".7" height="8"/></g><rect x="12.5" y="24.5" width="7" height="2.5" rx="1" fill="#e5332a"/></svg><div class="b-bar"><i></i></div></div></div>
+  <div id="boot" aria-hidden="true">
+    <div class="b-stage">
+      <div class="b-glow"></div>
+      <div class="b-rays"><i style="transform:rotate(-150deg) translateY(-92px)"></i><i style="transform:rotate(-120deg) translateY(-92px)"></i><i style="transform:rotate(-90deg) translateY(-92px)"></i><i style="transform:rotate(-60deg) translateY(-92px)"></i><i style="transform:rotate(-30deg) translateY(-92px)"></i><i style="transform:rotate(0deg) translateY(-92px)"></i><i style="transform:rotate(30deg) translateY(-92px)"></i><i style="transform:rotate(60deg) translateY(-92px)"></i><i style="transform:rotate(90deg) translateY(-92px)"></i><i style="transform:rotate(120deg) translateY(-92px)"></i><i style="transform:rotate(150deg) translateY(-92px)"></i></div>
+      <svg class="b-bulb" viewBox="0 0 32 32">
+        <!-- погасшая колба -->
+        <path d="M16 5a8 8 0 0 0-4.8 14.4c.8.6 1.3 1.5 1.3 2.5V23h7v-1.1c0-1 .5-1.9 1.3-2.5A8 8 0 0 0 16 5z" fill="#3a3833" stroke="#5a564d" stroke-width=".4"/>
+        <!-- горящая колба: мигает и загорается -->
+        <path class="b-lit" d="M16 5a8 8 0 0 0-4.8 14.4c.8.6 1.3 1.5 1.3 2.5V23h7v-1.1c0-1 .5-1.9 1.3-2.5A8 8 0 0 0 16 5z" fill="#ffd400"/>
+        <!-- нить-штрихкод -->
+        <g fill="#1f1d19"><rect x="12.5" y="10" width="1.2" height="8"/><rect x="14.6" y="10" width=".7" height="8"/><rect x="16.2" y="10" width="1.8" height="8"/><rect x="18.6" y="10" width=".7" height="8"/></g>
+        <rect x="12.5" y="24.5" width="7" height="2.5" rx="1" fill="#e5332a"/>
+      </svg>
+      <div class="b-name">BSL<b>amp</b></div>
+      <div class="b-tag">светлая идея для вашей 1С</div>
+      <div class="b-bar"><i></i></div>
+    </div>
+  </div>
   <canvas id="scene" aria-hidden="true"></canvas>
   <div class="scene-shade" aria-hidden="true"></div>
   <div class="grain" aria-hidden="true"></div>

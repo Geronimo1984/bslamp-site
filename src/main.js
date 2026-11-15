@@ -425,13 +425,20 @@ function initBoot() {
   const boot = document.getElementById('boot');
   if (!boot) return () => {};
   let done = false;
-  const hide = () => {
+  let ready = false;
+  const MIN = reduced ? 0 : 2700; // анимация «идеи» доигрывается до конца, даже если склад уже готов
+  const finish = () => {
     if (done) return;
     done = true;
-    boot.classList.add('off');
-    setTimeout(() => boot.remove(), 700);
+    boot.classList.add('off'); // свет лампы заливает экран, заставка тает
+    setTimeout(() => boot.remove(), 900);
   };
-  setTimeout(hide, 10000);
+  const hide = () => {
+    if (ready) return;
+    ready = true;
+    setTimeout(finish, Math.max(0, MIN - performance.now())); // отсчёт от начала загрузки страницы — анимация стартует сразу из HTML
+  };
+  setTimeout(finish, 10000); // медленный интернет: сайт открывается в любом случае
   return hide;
 }
 const hideBoot = initBoot();
