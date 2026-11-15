@@ -869,7 +869,7 @@ body.has3d .sec.chapter-on { padding: 0; } /* перебивает общий о
 @media (max-width: 1020px) {
   .sec.chapter-on { height: calc(var(--ch-steps, 7) * 70svh + 120svh); padding: 0; }
   /* положение окна главы задаётся переменными секции (настраиваются панелью ?tune=1): низ/верх, отступ, ширина */
-  .ch-stick { height: 100svh; align-items: var(--chw-align, flex-end); padding: var(--chw-top, 74px) 10px calc(var(--chw-gap, 12px) + env(safe-area-inset-bottom)); }
+  .ch-stick { height: 100vh; height: 100dvh; align-items: var(--chw-align, flex-end); padding: var(--chw-top, 74px) 10px calc(var(--chw-gap, 12px) + env(safe-area-inset-bottom)); }
   .ch-col { width: var(--chw-width, 100%); max-width: 560px; margin: 0 auto; }
   .w1c-bar { height: 34px; font-size: 12.5px; padding: 0 10px 0 12px; }
   .w1c-ctl { display: none; }
@@ -922,3 +922,13 @@ html.snap-touch { scroll-snap-type: y mandatory; scroll-behavior: auto; }
 
 /* режим глав: паузы-фразы не занимают прокрутку — камера перелетает к следующей главе в конце текущей */
 body.chapters-on .pause { min-height: 0; height: 0; padding: 0; overflow: hidden; }
+
+/* iPhone: высота экрана главы — по реально видимой части (100dvh), а не по «малому» экрану Safari (svh) —
+   иначе при спрятанных панелях браузера окно уезжает с низа на середину. Шаг «Также делаем» — плотнее */
+@media (max-width: 1020px) {
+  .w1c .ch-list { gap: 6px; }
+  .w1c .ch-list li { padding: 8px 12px; }
+  .w1c .ch-list li b { font-size: 14.5px; line-height: 1.3; }
+  .w1c .ch-list li span { font-size: 13px; line-height: 1.4; display: block; margin-top: 2px; }
+  .w1c .ch-also .ch-title, .w1c .ch-step .ch-title { line-height: 1.15; }
+}
