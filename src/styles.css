@@ -60,8 +60,8 @@
   --solid: #2c2c31;
   --top-bg: rgba(27, 27, 30, 0.85);
   --menu-bg: rgba(27, 27, 30, 0.97);
-  --shade: linear-gradient(90deg, rgba(27, 27, 30, 0.92) 0%, rgba(27, 27, 30, 0.7) 38%, rgba(27, 27, 30, 0.15) 70%, rgba(27, 27, 30, 0) 100%);
-  --shade-mobile: linear-gradient(180deg, rgba(27, 27, 30, 0.85), rgba(27, 27, 30, 0.7) 60%, rgba(27, 27, 30, 0.5));
+  --shade: linear-gradient(90deg, rgba(27, 27, 30, 0.4) 0%, rgba(27, 27, 30, 0.25) 38%, rgba(27, 27, 30, 0.05) 70%, rgba(27, 27, 30, 0) 100%);
+  --shade-mobile: linear-gradient(180deg, rgba(27, 27, 30, 0.3), rgba(27, 27, 30, 0.18) 60%, rgba(27, 27, 30, 0.1));
   --ghost-bg: rgba(255, 255, 255, 0.06);
   --ghost-line: rgba(255, 255, 255, 0.25);
   --cursor: rgba(255, 212, 0, 0.85);
@@ -676,7 +676,8 @@ h2 { font: 500 clamp(32px, 4.2vw, 54px)/1.08 var(--f-head); letter-spacing: -0.0
     background: linear-gradient(90deg, rgba(243, 239, 230, 0.6) 0%, rgba(243, 239, 230, 0.5) calc(var(--pad-x) + var(--col) - 40px), rgba(243, 239, 230, 0.15) calc(var(--pad-x) + var(--col) + 120px), rgba(243, 239, 230, 0) calc(var(--pad-x) + var(--col) + 260px));
   }
   :root[data-theme="dark"] body.has3d .scene-shade {
-    background: linear-gradient(90deg, rgba(27, 27, 30, 0.96) 0%, rgba(27, 27, 30, 0.93) calc(var(--pad-x) + var(--col) - 40px), rgba(27, 27, 30, 0.3) calc(var(--pad-x) + var(--col) + 120px), rgba(27, 27, 30, 0) calc(var(--pad-x) + var(--col) + 260px));
+    /* вечером вуаль почти невидима — текст держится на собственной тёмной подсветке букв (--halo) */
+    background: linear-gradient(90deg, rgba(27, 27, 30, 0.32) 0%, rgba(27, 27, 30, 0.22) calc(var(--pad-x) + var(--col) - 40px), rgba(27, 27, 30, 0.06) calc(var(--pad-x) + var(--col) + 120px), rgba(27, 27, 30, 0) calc(var(--pad-x) + var(--col) + 260px));
   }
   /* мелкий текст на вуали: темнее и на ступень крупнее, чтобы не терялся на фоне склада */
   body.has3d { --muted: #3f3c36; --dim: #6b665c; }
@@ -714,7 +715,7 @@ body.has3d .scene-shade::after {
   content: ''; position: fixed; inset: 0; pointer-events: none;
   background: radial-gradient(120% 95% at 62% 48%, transparent 55%, rgba(31, 29, 25, 0.22) 100%);
 }
-:root[data-theme="dark"] body.has3d .scene-shade::after { background: radial-gradient(120% 95% at 62% 48%, transparent 50%, rgba(0, 0, 0, 0.5) 100%); }
+:root[data-theme="dark"] body.has3d .scene-shade::after { background: radial-gradient(120% 95% at 62% 48%, transparent 60%, rgba(0, 0, 0, 0.22) 100%); }
 
 
 

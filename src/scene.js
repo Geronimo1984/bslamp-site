@@ -16,10 +16,12 @@ const BG = 0xe9e3d6; // дневной склад: тёплая светлая �
 
 // Две темы склада: день (светлая тема сайта) и вечер (тёмная). Ссылки на свет и материалы — в LOOK.
 const THEMES = {
-  light: { bg: 0xe9e3d6, fog: 0.021, exposure: 1.0, hemi: [0xfffaf0, 0xb8ad98, 1.3], key: 1.9, fill: 0.5, points: 1, strip: 0xffffff,
+  light: { keyColor: 0xfff4e0, keyPos: [8, 16, 10], fillColor: 0xe8eefc, bg: 0xe9e3d6, fog: 0.021, exposure: 1.0, hemi: [0xfffaf0, 0xb8ad98, 1.3], key: 1.9, fill: 0.5, points: 1, strip: 0xffffff,
     floor: 0xbcb8b0, wall: 0xdedad2, grid: [0xa6a299, 0xb0aca3], dock: 0xbdb5a5, deck: 0x8d8a83, bloom: 0.18, particles: [0x2f2a22, 0.7] },
-  dark: { bg: 0x1d1c1f, fog: 0.032, exposure: 1.05, hemi: [0xfff2cc, 0x2a2a30, 0.7], key: 0.7, fill: 0.15, points: 2.6, strip: 0xfff3c4,
-    floor: 0x2c2b2f, wall: 0x232327, grid: [0x4a4536, 0x36332a], dock: 0x3a3a40, deck: 0x3a3a40, bloom: 0.5, particles: [0xffd400, 0.5] },
+  // вечер «золотой час»: низкое тёплое солнце бьёт сквозь левые окна, тени уходят в сине-сиреневый, дымка тёплая
+  dark: { bg: 0x4a3a35, fog: 0.018, exposure: 1.45, hemi: [0xffc896, 0x463f5e, 1.3], key: 2.4, fill: 0.55, points: 2.4, strip: 0xffe2b0,
+    keyColor: 0xff9f4a, keyPos: [-26, 7, 4], fillColor: 0x8f93d8,
+    floor: 0x5a514c, wall: 0x4a403d, grid: [0x6e604c, 0x5a4f42], dock: 0x5e5552, deck: 0x6a625c, bloom: 0.5, particles: [0xffc46a, 0.55] },
 };
 const LOOK = {};
 
@@ -220,7 +222,10 @@ export function createScene(canvas, { mobile }) {
     LOOK.hemi.groundColor.setHex(th.hemi[1]);
     LOOK.hemi.intensity = th.hemi[2];
     LOOK.key.intensity = th.key;
+    LOOK.key.color.setHex(th.keyColor);
+    LOOK.key.position.set(...th.keyPos);
     LOOK.fill.intensity = th.fill;
+    LOOK.fill.color.setHex(th.fillColor);
     LOOK.points.forEach(([light, base]) => { light.intensity = base * th.points; });
     LOOK.strip.color.setHex(th.strip);
     LOOK.floor.color.setHex(th.floor);

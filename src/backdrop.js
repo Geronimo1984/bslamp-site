@@ -384,16 +384,19 @@ export function addBackdrop(scene, { mobile }) {
     update(t) { anim.forEach((f) => f(t)); },
     setTheme(name) {
       const dark = name === 'dark';
-      look.win.color.setHex(dark ? 0x1f2a3d : 0xf6f9ff); // днём светлые окна, вечером — синие сумерки
-      look.shafts.opacity = dark ? 0 : 0.32;
-      look.dust.opacity = dark ? 0.25 : 0.7;
+      // вечер — золотой час: окна горят закатом, лучи солнца оранжевые и длинные, пыль золотится
+      look.win.color.setHex(dark ? 0xffb366 : 0xf6f9ff);
+      look.shafts.opacity = dark ? 0.5 : 0.32;
+      look.shafts.color.setHex(dark ? 0xff9a40 : 0xffffff);
+      look.dust.opacity = dark ? 0.75 : 0.7;
+      look.dust.color.setHex(dark ? 0xffc070 : 0xfff6dc);
       look.bulb.color.setHex(dark ? 0xffe9a6 : 0xfff1c9);
-      look.dockWall.color.setHex(dark ? 0x2f2f34 : 0xdcd5c7);
-      look.dockGlow.color.setHex(dark ? 0x6f7d96 : 0xfff8e6);
-      look.col.color.setHex(dark ? 0x3d3d43 : 0xb7b3aa);
-      look.steel.color.setHex(dark ? 0x55545a : 0x8f8d88);
-      look.bigLogo.opacity = dark ? 0.0 : 1;
-      look.stencils.forEach((mt) => { mt.opacity = dark ? 0.35 : 1; });
+      look.dockWall.color.setHex(dark ? 0x4f4542 : 0xdcd5c7);
+      look.dockGlow.color.setHex(dark ? 0xffa860 : 0xfff8e6);
+      look.col.color.setHex(dark ? 0x544a46 : 0xb7b3aa);
+      look.steel.color.setHex(dark ? 0x6a605a : 0x8f8d88);
+      look.bigLogo.opacity = dark ? 0.55 : 1;
+      look.stencils.forEach((mt) => { mt.opacity = dark ? 0.6 : 1; });
     },
   };
 }
