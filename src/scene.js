@@ -36,7 +36,7 @@ const STATIONS = [ // кадры выставлены в редакторе 14.1
 
 export function createScene(canvas, { mobile }) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: !mobile, powerPreference: 'high-performance' });
-  let pixelRatio = Math.min(window.devicePixelRatio, mobile ? 1 : 1.5); // телефон: чёткость 1× — главный выигрыш в скорости
+  let pixelRatio = Math.min(window.devicePixelRatio, mobile ? 1 : 1.25); // телефон 1×, компьютер ≤1,25× — на Retina разница не видна, а пикселей в 1,4 раза меньше
   renderer.setPixelRatio(pixelRatio);
   renderer.setClearColor(BG, 1);
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -80,7 +80,8 @@ export function createScene(canvas, { mobile }) {
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.18, 0.4, 0.97) // днём свечение едва заметно;
   composer.addPass(bloom);
   composer.addPass(new OutputPass());
-  let useBloom = !mobile; // свечение на телефоне выключено: днём его почти не видно, а стоит дорого
+  let useBloom = false; // свечение — только вечером (тёмная тема) и не на телефоне: днём его не видно, а стоит дорого
+  let bloomAllowed = !mobile;
 
   let target = 0;
   // наезд камеры, пока читают раздел: метры вдоль взгляда (0 — кадр как выставлен в редакторе)
@@ -131,6 +132,7 @@ export function createScene(canvas, { mobile }) {
     if (fps < 40) {
       degraded = true;
       useBloom = false;
+      bloomAllowed = false;
       pixelRatio = 1;
       renderer.setPixelRatio(pixelRatio);
       resize();
@@ -139,9 +141,19 @@ export function createScene(canvas, { mobile }) {
 
   const clock = new THREE.Clock();
   let running = true;
+  // Камера стоит и мышь не двигается — рисуем через кадр (30 кадров/с): индикаторы и частицы так же плавные,
+  // а видеокарта работает вдвое меньше. В движении — каждый кадр
+  let lastInput = 0;
+  let skip = false;
+  window.addEventListener('pointermove', () => { lastInput = performance.now(); }, { passive: true });
+  window.addEventListener('scroll', () => { lastInput = performance.now(); }, { passive: true });
   function frame(now) {
     if (!running) return;
     requestAnimationFrame(frame);
+    const settled = Math.abs(target - current) < 1e-4 && Math.abs(dollyTarget - dolly) < 1e-3
+      && lookOff.distanceToSquared(lookOffTarget) < 1e-6 && camOff.distanceToSquared(camOffTarget) < 1e-6
+      && now - lastInput > 400;
+    if (settled && (skip = !skip)) { frames++; return; }
     const t = clock.getElapsedTime();
     current += (target - current) * 0.06;
 
@@ -227,6 +239,7 @@ export function createScene(canvas, { mobile }) {
     old.geometry.dispose();
     scene.add(LOOK.grid);
     bloom.strength = th.bloom;
+    useBloom = bloomAllowed && name === 'dark';
     backdrop.setTheme(name);
   }
 

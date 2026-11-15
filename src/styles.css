@@ -932,3 +932,8 @@ body.chapters-on .pause { min-height: 0; height: 0; padding: 0; overflow: hidden
   .w1c .ch-list li span { font-size: 13px; line-height: 1.4; display: block; margin-top: 2px; }
   .w1c .ch-also .ch-title, .w1c .ch-step .ch-title { line-height: 1.15; }
 }
+
+/* скорость: поверх 3D-склада без размытия под шапкой и без зерна — они пересчитывались каждый кадр вместе со сценой */
+body.has3d .top { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--menu-bg); }
+body.has3d .grain { display: none; }
+body.has3d .glass { backdrop-filter: none; -webkit-backdrop-filter: none; background: var(--surface); }
