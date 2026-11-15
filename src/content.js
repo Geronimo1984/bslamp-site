@@ -120,7 +120,7 @@ export const TEXT = {
       title: 'Пришли в 1С из бизнеса',
       founderLabel: 'Основатель',
       founder: 'Нигина Ражабова',
-      founderRole: 'разработчик 1С уровня Middle+',
+      founderRole: 'специалист по 1С',
       text: [
         'BSLamp начался не с курсов, а с бизнеса: основатель студии была управляющей розничной сети — сама вела учёт, заказы и работу операторов в 1С, потом перешла к доработкам и полноценной разработке.',
         'Поэтому мы сначала разбираемся в процессе, а потом пишем код. Ведём задачу целиком — от сбора требований до внедрения и сопровождения, без лишних посредников.',
@@ -262,7 +262,7 @@ export const TEXT = {
       title: 'Came to 1C from business',
       founderLabel: 'Founder',
       founder: 'Nigina Razhabova',
-      founderRole: 'Middle+ 1C developer',
+      founderRole: '1C specialist',
       text: [
         'BSLamp started not with courses but with business: our founder ran a retail chain, handling accounting, orders and operators in 1C herself, then moved to customisations and full-scale development.',
         'So we understand the process first and write code second. We take a task end to end — from requirements to rollout and support, with no middlemen.',

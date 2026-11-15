@@ -27,7 +27,7 @@ function makeChapter({ id, kicker, title, path, of, steps, total = steps.length,
           <header class="w1c-bar">
             <span class="w1c-logo" aria-hidden="true"></span>
             <b>${esc(title)}</b>
-            <em class="w1c-path">${esc(path)} · <span class="ch-pos">01</span> ${esc(of)} ${pad(total)}</em>
+            <em class="w1c-path"><span class="ch-pos">01</span> ${esc(of)} ${pad(total)}</em>
             <span class="w1c-ctl" aria-hidden="true"><i></i><i></i><i></i></span>
           </header>
           <div class="ch-steps">${steps.map((html, k) => `<div class="ch-step" data-step="${k}">${html}</div>`).join('')}</div>

@@ -13,7 +13,7 @@ export function initSnap({ chapterIds }) {
   // точки остановки — считаются заново при каждом шаге (высоты могли измениться)
   function stops() {
     const list = [0];
-    const H = innerHeight;
+    const H = Math.max(innerHeight, 320); // окно ещё не получило размер (фоновая вкладка) — без этого цикл ниже бесконечный
     for (const id of ['services', 'cases', 'process', 'about', 'order']) {
       const sec = document.getElementById(id);
       if (!sec) continue;
@@ -39,18 +39,24 @@ export function initSnap({ chapterIds }) {
   // В документ кладутся невидимые метки на позициях точек; scroll-snap-stop: always — один свайп = одна точка
   const touch = matchMedia('(pointer: coarse), (max-width: 1020px)').matches;
   let marks = [];
+  // метки обновляются на месте и только при изменении: пересоздание заставляло iPhone «прилипать» заново —
+  // к другой метке (например, из подвала страницу перебрасывало к серверной)
+  let lastKey = '';
   function buildMarks() {
-    marks.forEach((m) => m.remove());
     const list = stops();
     const bottom = document.documentElement.scrollHeight - innerHeight;
     if (list[list.length - 1] < bottom - 40) list.push(bottom); // подвал тоже досягаем
-    marks = list.map((y) => {
+    const key = list.join(',');
+    if (key === lastKey) return;
+    lastKey = key;
+    while (marks.length < list.length) {
       const m = document.createElement('i');
       m.className = 'snap-mark';
-      m.style.top = `${y}px`;
       document.body.append(m);
-      return m;
-    });
+      marks.push(m);
+    }
+    while (marks.length > list.length) marks.pop().remove();
+    list.forEach((y, k) => { marks[k].style.top = `${y}px`; });
   }
   if (touch) {
     document.documentElement.classList.add('snap-touch');
@@ -127,6 +133,7 @@ export function initSnap({ chapterIds }) {
   // ссылки меню (#services, #cases…) — тем же перелётом к первой точке раздела
   return {
     goTo(id) {
+      if (!id || id === 'hero' || id === 'top') { flyTo(0); return true; }
       const sec = document.getElementById(id);
       if (!sec) return false;
       const target = stops().find((s) => s >= sec.offsetTop - 30);

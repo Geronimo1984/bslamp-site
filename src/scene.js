@@ -118,8 +118,31 @@ export function createScene(canvas, { mobile }) {
   resize();
   window.addEventListener('resize', resize);
   window.addEventListener('pointermove', (e) => {
+    if (e.pointerType === 'touch') return; // на телефоне камерой двигает наклон, а не касание
     mouse.set(e.clientX / window.innerWidth - 0.5, e.clientY / window.innerHeight - 0.5);
   });
+
+  // Телефон: наклон двигает камеру, как будто склад снимают с рук. Нулевое положение — то, как держат телефон
+  // в начале; движение сглажено. iPhone спрашивает разрешение на датчик при первом касании экрана
+  const tilt = new THREE.Vector2();
+  let tiltBase = null;
+  let tiltOn = false;
+  function onTilt(e) {
+    if (e.beta == null || e.gamma == null) return;
+    if (!tiltBase) tiltBase = { b: e.beta, g: e.gamma };
+    const clamp = (v) => Math.max(-0.5, Math.min(0.5, v));
+    tilt.set(clamp((e.gamma - tiltBase.g) / 40), clamp((e.beta - tiltBase.b) / 40));
+    tiltOn = true;
+  }
+  if (mobile && 'DeviceOrientationEvent' in window) {
+    const ask = DeviceOrientationEvent.requestPermission;
+    if (typeof ask === 'function') {
+      const req = () => ask().then((st) => { if (st === 'granted') addEventListener('deviceorientation', onTilt); }).catch(() => {});
+      addEventListener('touchend', req, { once: true });
+    } else {
+      addEventListener('deviceorientation', onTilt);
+    }
+  }
 
   // Автоснижение качества, если кадры не успевают
   let frames = 0;
@@ -178,6 +201,14 @@ export function createScene(canvas, { mobile }) {
     camOff.lerp(camOffTarget, 0.06);
     camPos.add(camOff);
     camLook.add(camOff);
+    if (tiltOn) {
+      // сглаженный наклон + лёгкое «дыхание» рук — камера живая, но не дёрганая
+      const before = mouse.x + mouse.y;
+      mouse.lerp(tilt, 0.08);
+      mouse.x += Math.sin(t * 1.3) * 0.004;
+      mouse.y += Math.sin(t * 1.7 + 1) * 0.003;
+      if (Math.abs(mouse.x + mouse.y - before) > 0.002) lastInput = now;
+    }
     camPos.x += mouse.x * 0.6;
     camPos.y -= mouse.y * 0.35;
     camera.position.copy(camPos);

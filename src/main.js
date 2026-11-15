@@ -88,7 +88,14 @@ function render() {
   // в режиме глав экраны-паузы («Всё на своих местах» и т. п.) — пустые кадры между главами: убираем их из прокрутки
   document.body.classList.toggle('chapters-on', !!chapters);
   // пошаговая прокрутка: колесо — сразу перелёт к следующей точке (только вместе с главами, один раз)
-  if (chapters && !render.snap) render.snap = initSnap({ chapterIds: Object.keys(chapters) });
+  // ошибка в пошаговой прокрутке не должна обрывать запуск сайта (кнопки, заявка, кейсы подключаются ниже)
+  if (chapters && !render.snap) {
+    try { render.snap = initSnap({ chapterIds: Object.keys(chapters) }); } catch (err) { console.warn('Пошаговая прокрутка выключена:', err); }
+  }
+  if (!render.links) {
+    render.links = true;
+    initLinks();
+  }
   // панель настройки кадров и окон глав (только в разработке: адрес с ?tune=1)
   if (import.meta.env.DEV && chapters && new URLSearchParams(location.search).has('tune') && !render.tune) {
     render.tune = true;
@@ -418,6 +425,27 @@ async function initScene() {
     console.warn('3D отключено:', e);
     document.body.classList.add('no3d');
   }
+}
+
+// Ссылки внутри сайта (#cases, #order, «Наверх»…): перелёт к точке раздела, а не прыжок браузера.
+// Каждый переход пишется в историю — кнопка «назад» возвращает к прошлому разделу (браузерное
+// восстановление прокрутки выключено в index.html, поэтому «назад» ведём сами)
+function goToSection(id) {
+  if (render.snap?.goTo(id)) return;
+  if (!id || id === 'hero') { window.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+}
+function initLinks() {
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest?.('a[href^="#"]');
+    if (!a || a.classList.contains('credits-link')) return;
+    const id = a.getAttribute('href').slice(1);
+    if (id && !document.getElementById(id)) return;
+    e.preventDefault();
+    if (location.hash !== `#${id}`) history.pushState(null, '', id === 'hero' ? location.pathname + location.search : `#${id}`);
+    goToSection(id);
+  });
+  addEventListener('popstate', () => goToSection(location.hash.slice(1)));
 }
 
 // заставка: прогресс загрузки моделей, убирается, когда склад готов (или через 10 с, чтобы сайт не завис)
