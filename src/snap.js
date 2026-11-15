@@ -68,13 +68,18 @@ export function initSnap({ chapterIds }) {
     const dist = Math.abs(y - from);
     if (dist < 2) return;
     animating = true;
+    document.documentElement.classList.remove('snap-touch');
     const dur = Math.min(1700, 700 + dist * 0.12); // дальний перелёт чуть дольше
     const t0 = performance.now();
     const tick = (now) => {
       const p = Math.min(1, (now - t0) / dur);
       window.scrollTo({ top: from + (y - from) * ease(p), behavior: 'instant' });
       if (p < 1) requestAnimationFrame(tick);
-      else { animating = false; unlockAt = performance.now() + LOCK_MS; }
+      else {
+        animating = false;
+        unlockAt = performance.now() + LOCK_MS;
+        if (touch) document.documentElement.classList.add('snap-touch');
+      }
     };
     requestAnimationFrame(tick);
   }
@@ -93,8 +98,9 @@ export function initSnap({ chapterIds }) {
 
   const freeZone = (el) => el?.closest?.('input, textarea, select, .journal-list, .nav-mobile, .scrollable');
 
-  // компьютер: колесо и клавиши ведём сами (на телефоне — прилипание браузера, см. выше)
-  if (!touch) {
+  // колесо мыши / тачпад и клавиши ведём сами — и на компьютере, и на узком окне с мышью
+  // (браузерное прилипание на время перелёта выключается, иначе оно возвращает страницу назад)
+  {
     addEventListener('wheel', (e) => {
       if (freeZone(e.target) || e.ctrlKey) return;
       const list = stops();

@@ -85,6 +85,8 @@ function render() {
   }
 
   chapters = chapterSupported({ scene, reduced }) ? initChapters(t, () => live) : null;
+  // в режиме глав экраны-паузы («Всё на своих местах» и т. п.) — пустые кадры между главами: убираем их из прокрутки
+  document.body.classList.toggle('chapters-on', !!chapters);
   // пошаговая прокрутка: колесо — сразу перелёт к следующей точке (только вместе с главами, один раз)
   if (chapters && !render.snap) render.snap = initSnap({ chapterIds: Object.keys(chapters) });
   // панель настройки кадров и окон глав (только в разработке: адрес с ?tune=1)

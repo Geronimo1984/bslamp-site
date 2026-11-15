@@ -919,3 +919,6 @@ html.snap-touch { scroll-snap-type: y mandatory; scroll-behavior: auto; }
 .b-line { display: block; padding-left: 2.2em; text-indent: -2.2em; }
 .b-line .b-ln { text-indent: 0; }
 .w1c-code .b-ln { width: 2.2em; }
+
+/* режим глав: паузы-фразы не занимают прокрутку — камера перелетает к следующей главе в конце текущей */
+body.chapters-on .pause { min-height: 0; height: 0; padding: 0; overflow: hidden; }
